@@ -1,0 +1,2425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Education Key Public School - Fee Manager</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  #ekps-root, #ekps-root * { box-sizing: border-box; }
+  #ekps-root {
+    --ink:#1B2A4A;
+    --ink-2:#28395C;
+    --paper:#F4F1E9;
+    --card:#FFFFFF;
+    --saffron:#E8A33D;
+    --saffron-dark:#C9821F;
+    --slate:#5B6B82;
+    --green:#2F8F5B;
+    --green-bg:#E7F4EC;
+    --rust:#C1502E;
+    --rust-bg:#FBEAE4;
+    --amber:#B9862A;
+    --amber-bg:#FBF1DC;
+    --border:#E4E0D3;
+    --border-strong:#D6D0BF;
+    --shadow: 0 1px 2px rgba(27,42,74,0.06), 0 8px 24px -12px rgba(27,42,74,0.18);
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    min-height: 100vh;
+    display: flex;
+    position: relative;
+    isolation: isolate;
+  }
+  #ekps-root .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+  #ekps-root .disp { font-family: 'Sora', ui-sans-serif, sans-serif; }
+
+  /* ---------- Sidebar ---------- */
+  #ekps-root .sidebar {
+    width: 236px;
+    flex-shrink: 0;
+    background: linear-gradient(185deg, var(--ink) 0%, #16233F 100%);
+    color: #EAEDF4;
+    display: flex;
+    flex-direction: column;
+    padding: 22px 16px;
+    min-height: 100vh;
+    position: sticky;
+    top: 0;
+  }
+  #ekps-root .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 8px 20px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    margin-bottom: 18px;
+  }
+  #ekps-root .brand-badge {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: var(--saffron);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Sora'; font-weight: 800; color: var(--ink); font-size: 15px;
+    flex-shrink: 0;
+  }
+  #ekps-root .brand-name { font-family:'Sora'; font-weight: 700; font-size: 13.5px; line-height: 1.25; }
+  #ekps-root .brand-sub { font-size: 10.5px; color: #A9B4CB; letter-spacing: .04em; text-transform: uppercase; margin-top: 1px; }
+
+  #ekps-root nav.navlist { display: flex; flex-direction: column; gap: 3px; margin-top: 4px; }
+  #ekps-root .navitem {
+    display: flex; align-items: center; gap: 11px;
+    padding: 10px 12px; border-radius: 9px; cursor: pointer;
+    color: #C7CFE0; font-size: 13.5px; font-weight: 500;
+    transition: background .15s, color .15s;
+    user-select: none;
+  }
+  #ekps-root .navitem:hover { background: rgba(255,255,255,0.06); color: #fff; }
+  #ekps-root .navitem.active { background: rgba(232,163,61,0.16); color: #fff; }
+  #ekps-root .navitem.active .navicon { color: var(--saffron); }
+  #ekps-root .navicon { width: 17px; height: 17px; flex-shrink: 0; color: #8D98B3; }
+  #ekps-root .navitem.active .navicon, #ekps-root .navitem:hover .navicon { color: var(--saffron); }
+
+  #ekps-root .sidebar-foot {
+    margin-top: auto; padding: 12px 10px 2px 10px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 10.5px; color: #8D98B3; line-height: 1.5;
+  }
+
+  /* ---------- Main ---------- */
+  #ekps-root .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  #ekps-root .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 28px; border-bottom: 1px solid var(--border);
+    background: rgba(244,241,233,0.85); backdrop-filter: blur(6px);
+    position: sticky; top: 0; z-index: 5;
+  }
+  #ekps-root .topbar h1 { font-family:'Sora'; font-size: 19px; font-weight: 700; margin: 0; }
+  #ekps-root .topbar .sub { font-size: 12px; color: var(--slate); margin-top: 2px; }
+  #ekps-root .topbar-right { display:flex; align-items:center; gap: 14px; font-size: 12px; color: var(--slate); }
+  #ekps-root .content { padding: 24px 28px 60px 28px; }
+
+  #ekps-root .btn {
+    font-family: 'Inter'; font-weight: 600; font-size: 13px;
+    padding: 9px 16px; border-radius: 8px; border: 1px solid transparent;
+    cursor: pointer; display:inline-flex; align-items:center; gap: 7px;
+    transition: transform .06s ease, box-shadow .15s;
+  }
+  #ekps-root .btn:active { transform: translateY(1px); }
+  #ekps-root .btn-primary { background: var(--ink); color:#fff; }
+  #ekps-primary:hover { background: var(--ink-2); }
+  #ekps-root .btn-accent { background: var(--saffron); color: var(--ink); }
+  #ekps-accent:hover { background: var(--saffron-dark); color: #fff; }
+  #ekps-root .btn-ghost { background: transparent; border-color: var(--border-strong); color: var(--ink); }
+  #ekps-root .btn-ghost:hover { background: #fff; }
+  #ekps-root .btn-sm { padding: 6px 11px; font-size: 12px; }
+  #ekps-root .btn-danger { background: transparent; color: var(--rust); border-color: #EAD0C6; }
+  #ekps-root .btn-danger:hover { background: var(--rust-bg); }
+  #ekps-root .btn:disabled { opacity:.45; cursor:not-allowed; }
+
+  /* ---------- Cards / KPIs ---------- */
+  #ekps-root .kpi-grid { display:grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 22px; }
+  #ekps-root .kpi-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 18px; box-shadow: var(--shadow); position: relative; overflow:hidden;
+  }
+  #ekps-root .kpi-card::before {
+    content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background: var(--accent, var(--saffron));
+  }
+  #ekps-root .kpi-label { font-size: 11.5px; color: var(--slate); text-transform: uppercase; letter-spacing: .05em; font-weight:600; }
+  #ekps-root .kpi-value { font-family:'Sora'; font-weight: 700; font-size: 25px; margin-top: 6px; }
+  #ekps-root .kpi-note { font-size: 11px; color: var(--slate); margin-top: 4px; }
+
+  #ekps-root .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+  #ekps-root .panel-head { display:flex; align-items:center; justify-content:space-between; padding: 16px 18px; border-bottom: 1px solid var(--border); }
+  #ekps-root .panel-head h3 { font-family:'Sora'; font-size:14.5px; margin:0; font-weight:700; }
+  #ekps-root .panel-body { padding: 16px 18px; }
+
+  #ekps-root .two-col { display:grid; grid-template-columns: 1.3fr 1fr; gap: 16px; align-items:start; }
+
+  /* class bars */
+  #ekps-root .classbar-row { display:flex; align-items:center; gap: 10px; padding: 7px 0; }
+  #ekps-root .classbar-label { width: 46px; font-size: 12px; font-weight:600; color: var(--ink); flex-shrink:0; }
+  #ekps-root .classbar-track { flex:1; height: 9px; background:#EFEBDF; border-radius: 5px; overflow:hidden; }
+  #ekps-root .classbar-fill { height:100%; background: linear-gradient(90deg, var(--saffron), var(--saffron-dark)); border-radius: 5px; }
+  #ekps-root .classbar-val { width: 84px; text-align:right; font-size: 11.5px; font-family:'IBM Plex Mono'; color: var(--slate); flex-shrink:0; }
+
+  /* recent list */
+  #ekps-root .recent-row { display:flex; align-items:center; justify-content:space-between; padding: 9px 0; border-bottom: 1px dashed var(--border); font-size:13px; }
+  #ekps-root .recent-row:last-child { border-bottom:none; }
+  #ekps-root .recent-name { font-weight:600; }
+  #ekps-root .recent-meta { font-size:11.5px; color:var(--slate); }
+  #ekps-root .recent-amt { font-family:'IBM Plex Mono'; font-weight:600; color: var(--green); }
+
+  /* ---------- Forms ---------- */
+  #ekps-root .field { display:flex; flex-direction:column; gap:5px; margin-bottom:14px; }
+  #ekps-root .field label { font-size:11.5px; font-weight:600; color: var(--slate); text-transform:uppercase; letter-spacing:.03em; }
+  #ekps-root .field input, #ekps-root .field select {
+    font-family:'Inter'; font-size: 13.5px; padding: 9px 11px; border-radius: 8px;
+    border: 1px solid var(--border-strong); background:#fff; color: var(--ink); outline:none;
+  }
+  #ekps-root .field input:focus, #ekps-root .field select:focus { border-color: var(--saffron); box-shadow: 0 0 0 3px rgba(232,163,61,0.18); }
+  #ekps-root .field .hint { font-size: 11px; color: var(--slate); }
+  #ekps-root .form-grid { display:grid; grid-template-columns: repeat(3,1fr); gap: 0 16px; }
+  #ekps-root .form-grid.cols-4 { grid-template-columns: repeat(4,1fr); }
+
+  #ekps-root .pick-preview {
+    margin-top: -4px; margin-bottom: 14px; padding: 10px 12px; border-radius: 8px;
+    background: var(--paper); border: 1px dashed var(--border-strong); font-size: 12.5px; color: var(--ink);
+    display:none;
+  }
+  #ekps-root .pick-preview.show { display:block; }
+  #ekps-root .pick-preview b { font-weight:700; }
+
+  /* ---------- Tables ---------- */
+  #ekps-root table.data { width:100%; border-collapse: collapse; font-size: 13px; }
+  #ekps-root table.data thead th {
+    text-align:left; font-size: 11px; text-transform:uppercase; letter-spacing:.04em;
+    color: var(--slate); font-weight:700; padding: 9px 10px; border-bottom: 1px solid var(--border-strong);
+    background: #FBFAF6; position: sticky; top:0;
+  }
+  #ekps-root table.data tbody td { padding: 10px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  #ekps-root table.data tbody tr:hover { background: #FCFAF3; }
+  #ekps-root table.data tbody tr.detail-row { background: #FBFAF6; }
+  #ekps-root table.data tbody tr.detail-row:hover { background: #FBFAF6; }
+  #ekps-root .id-chip { font-family:'IBM Plex Mono'; font-size:11.5px; background:#EFEBDD; border-radius:5px; padding:2px 6px; color:var(--ink-2); }
+  #ekps-root .cls-chip { font-size:11px; font-weight:600; color: var(--ink-2); background:#EDE9F5; border-radius:5px; padding:2px 7px; }
+
+  #ekps-root .status-badge { font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px; display:inline-block; letter-spacing:.02em; }
+  #ekps-root .status-Paid { background: var(--green-bg); color: var(--green); }
+  #ekps-root .status-Partial { background: var(--amber-bg); color: var(--amber); }
+  #ekps-root .status-Due { background: var(--rust-bg); color: var(--rust); }
+
+  #ekps-root .row-actions { display:flex; gap:6px; }
+  #ekps-root .icon-btn {
+    width: 28px; height:28px; border-radius:7px; border:1px solid var(--border-strong); background:#fff;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; color: var(--slate);
+  }
+  #ekps-root .icon-btn:hover { background: var(--paper); color: var(--ink); }
+  #ekps-root .icon-btn svg { width:14px; height:14px; }
+
+  #ekps-root .toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+  #ekps-root .toolbar input[type=text], #ekps-root .toolbar select {
+    font-family:'Inter'; font-size:13px; padding: 8px 11px; border-radius:8px; border:1px solid var(--border-strong); background:#fff;
+  }
+  #ekps-root .toolbar .search-wrap { position:relative; flex:1; min-width:200px; max-width:320px; }
+  #ekps-root .toolbar .search-wrap svg { position:absolute; left:10px; top:50%; transform:translateY(-50%); width:14px; height:14px; color:var(--slate); }
+  #ekps-root .toolbar .search-wrap input { padding-left: 30px; width:100%; }
+  #ekps-root .promotion-card { border:1px solid var(--border); border-radius:8px; background:#fff; padding:16px; }
+  #ekps-root .promotion-summary { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:10px; margin:14px 0; }
+  #ekps-root .promotion-stat { background:var(--paper); border:1px solid var(--border); border-radius:8px; padding:12px; }
+  #ekps-root .promotion-stat .k { font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--slate); font-weight:700; }
+  #ekps-root .promotion-stat .v { font-family:'Sora'; font-weight:800; font-size:18px; margin-top:4px; color:var(--ink); }
+  #ekps-root .promotion-note { font-size:12px; color:var(--slate); line-height:1.5; background:var(--amber-bg); border:1px solid #F0DEB7; border-radius:8px; padding:10px 12px; }
+
+  #ekps-root .empty-state { text-align:center; padding: 46px 20px; color: var(--slate); }
+  #ekps-root .empty-state .disp { font-size:15px; color: var(--ink); margin-bottom:4px; }
+
+  #ekps-root .month-grid { display:grid; grid-template-columns: repeat(6,1fr); gap:6px; padding: 12px 10px 14px 40px; }
+  #ekps-root .month-cell { border-radius:7px; padding:7px 8px; font-size:11px; background:#fff; border:1px solid var(--border); }
+  #ekps-root .month-cell .m { color:var(--slate); font-weight:600; text-transform:uppercase; font-size:9.5px; letter-spacing:.03em; }
+  #ekps-root .month-cell .v { font-family:'IBM Plex Mono'; font-weight:700; margin-top:2px; }
+  #ekps-root .month-cell.paid { background: var(--green-bg); border-color:#CFE9D9; }
+  #ekps-root .month-cell.paid .v { color: var(--green); }
+
+  /* Month table styling for Fee Management View */
+  #ekps-root table.month-bill-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size:11px; }
+  #ekps-root table.month-bill-table th { background: #F8F6F0; padding: 5px; border: 1px solid var(--border-strong); text-align: center; font-size: 9px; }
+  #ekps-root table.month-bill-table td { padding: 5px; border: 1px solid var(--border); text-align: center; font-weight: 600; }
+  #ekps-root .cell-due { color: var(--rust); background: var(--rust-bg); }
+  #ekps-root .cell-paid { color: var(--green); background: var(--green-bg); }
+  #ekps-root .cell-advance-clear { color: #856404; background: #FFF3CD; font-style: italic; font-size: 10px; }
+
+  #ekps-root .toast {
+    position: fixed; bottom: 22px; right: 22px; background: var(--ink); color:#fff;
+    padding: 12px 18px; border-radius: 9px; font-size:13px; box-shadow: var(--shadow);
+    display:flex; align-items:center; gap:9px; z-index: 60; opacity:0; transform: translateY(8px);
+    transition: opacity .25s, transform .25s; pointer-events:none;
+  }
+  #ekps-root .toast.show { opacity:1; transform:translateY(0); }
+  #ekps-root .toast .dot { width:7px; height:7px; border-radius:50%; background: var(--saffron); }
+
+  #ekps-root .modal-backdrop {
+    position: fixed; inset:0; background: rgba(20,28,46,0.45); z-index: 50;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  #ekps-root .modal {
+    background:#fff; border-radius: 14px; width: 560px; max-width:100%; max-height: 88vh; overflow:auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  #ekps-root .modal-head { padding: 18px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  #ekps-root .modal-head h3 { font-family:'Sora'; margin:0; font-size:16px; }
+  #ekps-root .modal-body { padding: 18px 20px; }
+  #ekps-root .modal-foot { padding: 14px 20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px; }
+
+  /* ---------- Receipt (signature element) ---------- */
+  #ekps-root .receipt-wrap { display:flex; justify-content:center; padding: 10px 0 20px 0; }
+  #ekps-root .receipt {
+    width: 380px; background:#fff; border-radius: 4px; position:relative;
+    box-shadow: var(--shadow); padding: 26px 26px 20px 26px;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px);
+    background-size: 100% 26px;
+    background-position: 0 118px;
+  }
+  #ekps-root .receipt::before, #ekps-root .receipt::after {
+    content:""; position:absolute; width:20px; height:20px; background: var(--paper); border-radius:50%;
+    top: 50%; margin-top:-10px;
+  }
+  #ekps-root .receipt::before { left:-10px; }
+  #ekps-root .receipt::after { right:-10px; }
+  #ekps-root .receipt-perf {
+    position:absolute; left:14px; right:14px; top:50%; margin-top:-1px; border-top: 2px dashed var(--border-strong);
+  }
+  #ekps-root .receipt-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 14px; }
+  #ekps-root .receipt-school { font-family:'Sora'; font-weight:800; font-size:14.5px; line-height:1.25; }
+  #ekps-root .receipt-school-sub { font-size:10px; color:var(--slate); margin-top:2px; }
+  #ekps-root .receipt-no { font-family:'IBM Plex Mono'; font-size:11px; background:var(--paper); padding:4px 8px; border-radius:5px; }
+  #ekps-root .receipt-row { display:flex; justify-content:space-between; font-size:12.5px; padding: 6px 0; }
+  #ekps-root .receipt-row .k { color: var(--slate); }
+  #ekps-root .receipt-row .v { font-weight:600; text-align:right; }
+  #ekps-root .receipt-amt-block { text-align:center; margin: 14px 0 4px 0; }
+  #ekps-root .receipt-amt-label { font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:var(--slate); }
+  #ekps-root .receipt-amt { font-family:'Sora'; font-weight:800; font-size:26px; color: var(--green); margin-top:2px; }
+  #ekps-root .receipt-foot { margin-top: 44px; display:flex; justify-content:space-between; font-size:10.5px; color:var(--slate); }
+  #ekps-root .receipt-sign { border-top:1px solid var(--border-strong); padding-top:5px; width:150px; text-align:center; }
+
+  #ekps-root .receipt-picker { display:flex; gap:10px; align-items:flex-end; margin-bottom: 18px; flex-wrap:wrap; }
+
+  #ekps-root .admit-settings-grid { display:grid; grid-template-columns: 1.05fr .95fr; gap:16px; align-items:start; }
+  #ekps-root .admit-selected-list { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  #ekps-root .admit-pill { border:1px solid var(--border-strong); background:#fff; border-radius:16px; padding:4px 8px; font-size:11px; color:var(--ink-2); }
+  #ekps-root .admit-preview-grid { display:grid; grid-template-columns: repeat(2, minmax(260px, 1fr)); gap:12px; }
+  #ekps-root .admit-preview-card { border:1px solid var(--border-strong); border-radius:8px; background:#fff; padding:12px; min-height:190px; display:flex; flex-direction:column; }
+  #ekps-root .admit-preview-head { display:grid; grid-template-columns:44px 1fr 44px; gap:8px; align-items:center; border-bottom:1px solid var(--border); padding-bottom:8px; }
+  #ekps-root .admit-preview-logo, #ekps-root .admit-preview-photo { width:44px; height:52px; border:1px solid var(--border); object-fit:cover; background:var(--paper); }
+  #ekps-root .admit-preview-school { text-align:center; font-family:'Sora'; font-weight:800; font-size:13px; line-height:1.15; }
+  #ekps-root .admit-preview-tag { align-self:center; margin:8px 0; border:1px solid var(--ink); border-radius:20px; padding:3px 14px; font-size:11px; font-weight:800; letter-spacing:.06em; }
+  #ekps-root .admit-preview-details { display:grid; grid-template-columns:1fr 1fr; gap:5px 10px; font-size:12px; }
+  #ekps-root .admit-preview-details span { display:block; color:var(--slate); font-size:10px; }
+  #ekps-root .photo-thumb { width:38px; height:46px; object-fit:cover; border:1px solid var(--border-strong); border-radius:4px; background:var(--paper); }
+  #ekps-root textarea { font-family:'Inter'; font-size:13px; padding:9px 11px; border-radius:8px; border:1px solid var(--border-strong); background:#fff; width:100%; min-height:72px; resize:vertical; }
+
+  #ekps-print-dual, #ekps-admit-print { display:none; }
+  #ekps-print-dual .copy-tag { font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:var(--slate); font-weight:700; margin-bottom:6px; text-align:center; }
+
+  @media print {
+    body * { visibility: hidden; }
+    #ekps-print-dual, #ekps-print-dual *, #ekps-admit-print, #ekps-admit-print * { visibility: visible; }
+    #ekps-print-dual {
+      display:block; position: fixed; inset:0; background:#fff;
+    }
+    #ekps-print-dual .top-half {
+      height: 148.5mm; width:100%; box-sizing:border-box; padding: 8mm 10mm;
+      display:flex; align-items:stretch; gap: 6mm;
+    }
+    #ekps-print-dual .copy-col {
+      flex:1; min-width:0; box-sizing:border-box; padding: 0 4mm; position:relative;
+    }
+    #ekps-print-dual .copy-col.second { border-left: 2px dashed #999; }
+    #ekps-print-dual .bottom-half { height: 148.5mm; width:100%; }
+    #ekps-admit-print { display:block; position:absolute; inset:0; background:#fff; color:#111; font-family:Arial, Helvetica, sans-serif; }
+    #ekps-admit-print .admit-page { width:210mm; height:297mm; box-sizing:border-box; padding:8mm; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:6mm; page-break-after:always; }
+    #ekps-admit-print .admit-page:last-child { page-break-after:auto; }
+    #ekps-admit-print .admit-card { border:1.4px solid #1B2A4A; border-radius:3mm; padding:4mm; display:flex; flex-direction:column; min-height:0; overflow:hidden; }
+    #ekps-admit-print .admit-head { display:grid; grid-template-columns:16mm 1fr 16mm; gap:3mm; align-items:center; border-bottom:1px solid #1B2A4A; padding-bottom:2.5mm; }
+    #ekps-admit-print .admit-logo, #ekps-admit-print .admit-photo { width:16mm; height:18mm; object-fit:contain; border:1px solid #c8c8c8; }
+    #ekps-admit-print .admit-photo { object-fit:cover; }
+    #ekps-admit-print .admit-school { text-align:center; font-weight:800; font-size:12.5pt; line-height:1.1; text-transform:uppercase; }
+    #ekps-admit-print .admit-sub { text-align:center; font-size:7.5pt; margin-top:1mm; }
+    #ekps-admit-print .admit-tag { align-self:center; margin:2.5mm 0; border:1px solid #1B2A4A; padding:1mm 6mm; border-radius:8mm; font-weight:800; font-size:9pt; letter-spacing:.06em; }
+    #ekps-admit-print .admit-exam { text-align:center; font-size:8.5pt; font-weight:700; margin-bottom:2mm; }
+    #ekps-admit-print .admit-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.4mm 4mm; font-size:8.5pt; }
+    #ekps-admit-print .admit-field span { color:#555; font-size:7pt; display:block; }
+    #ekps-admit-print .admit-field b { font-size:8.5pt; }
+    #ekps-admit-print .admit-instructions { margin-top:2.5mm; border-top:1px dashed #999; padding-top:1.8mm; font-size:7pt; line-height:1.25; white-space:pre-line; }
+    #ekps-admit-print .admit-foot { margin-top:auto; display:grid; grid-template-columns:1fr 1fr; gap:5mm; align-items:end; font-size:7.5pt; }
+    #ekps-admit-print .sign-img { max-height:11mm; max-width:34mm; object-fit:contain; display:block; margin-left:auto; }
+    #ekps-admit-print .sign-line { border-top:1px solid #333; text-align:center; padding-top:1mm; }
+    #ekps-admit-print .stamp-box { border:1px dashed #777; height:15mm; display:flex; align-items:end; justify-content:center; padding-bottom:1mm; color:#666; }
+    @page { size: A4 portrait; margin: 0; }
+  }
+
+  @media (max-width: 980px) {
+    #ekps-root { flex-direction: column; }
+    #ekps-root .sidebar { width:100%; min-height:auto; position:relative; flex-direction:row; align-items:center; overflow-x:auto; }
+    #ekps-root .brand { border-bottom:none; margin-bottom:0; padding: 4px 10px; }
+    #ekps-root nav.navlist { flex-direction:row; margin-top:0; }
+    #ekps-root .sidebar-foot { display:none; }
+    #ekps-root .kpi-grid { grid-template-columns: repeat(2,1fr); }
+    #ekps-root .two-col { grid-template-columns: 1fr; }
+    #ekps-root .form-grid, #ekps-root .form-grid.cols-4 { grid-template-columns: repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div id="ekps-root">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-badge">EK</div>
+      <div style="flex: 1;">
+        <div class="brand-name">Education Key<br/>Public School</div>
+        <div class="brand-sub">Fee Manager</div>
+      </div>
+      <div id="ekps-logout-btn" style="cursor: pointer; font-size: 11px; padding: 4px 8px; background: rgba(255,255,255,0.1); border-radius: 5px; display: none;" title="Logout">Logout</div>
+    </div>
+    <nav class="navlist" id="ekps-nav"></nav>
+    <div class="sidebar-foot">Data saved privately to your account.<br/>Academic Year 2026&ndash;27</div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="ekps-title">Dashboard</h1>
+        <div class="sub" id="ekps-subtitle">Realtime fee collection overview</div>
+      </div>
+      <div class="topbar-right">
+        <span id="ekps-gas-badge" class="mono" style="display:none; padding: 3px 9px; border-radius: 5px; font-weight:600; font-size:11px; cursor:pointer; align-items:center; gap:5px;"></span>
+        <span id="ekps-role-badge" style="background: var(--border-strong); padding: 3px 8px; border-radius: 5px; font-weight: 600; text-transform: uppercase; font-size: 11px; color: var(--ink);"></span>
+        <span id="ekps-clock" class="mono"></span>
+      </div>
+    </div>
+    <div class="content" id="ekps-content"></div>
+  </div>
+
+  <div class="toast" id="ekps-toast"><span class="dot"></span><span id="ekps-toast-text">Saved</span></div>
+  <div id="ekps-modal-root"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function(){
+  const MONTHS = ['April','May','June','July','August','September','October','November','December','January','February','March'];
+  const CLASS_ORDER = ['P.NC','N.C','L.K.G','U.K.G','1st','2nd','3rd','4th','5th','6th','7th','8th'];
+  const SEED_STUDENTS = [];
+
+  const ICONS = {
+    dashboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="navicon"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>',
+    collect: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="navicon"><rect x="2.5" y="6" width="19" height="13" rx="2"/><path d="M2.5 10h19"/><circle cx="16.5" cy="14.5" r="1.5"/></svg>',
+    students: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="navicon"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6.2 6.5-6.2s6.5 2.6 6.5 6.2"/><circle cx="17.3" cy="8.8" r="2.4"/><path d="M15.8 13.9c2.8.4 4.7 2.6 4.7 5.6"/></svg>',
+    ledger: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="navicon"><path d="M5 3h11l3 3v15H5z"/><path d="M16 3v3h3"/><path d="M8.5 11h7M8.5 14.5h7M8.5 18h4"/></svg>',
+    receipts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="navicon"><path d="M5 3h14v18l-2.5-1.6L14 21l-2-1.6L10 21l-2.5-1.6L5 21z"/><path d="M8.5 8h7M8.5 11.5h7M8.5 15h4"/></svg>',
+    search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+    edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>',
+    print: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="6" y="13" width="12" height="8"/><path d="M6 17H3v-6a1 1 0 011-1h16a1 1 0 011 1v6h-3"/></svg>',
+    chevron: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>',
+    bill: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l3 3v17l-2.5-1.6L13 22l-2-1.6L9 22l-2.5-1.6L4 22V5a3 3 0 012-3z"/><path d="M8 8h6M8 11.5h6M8 15h3.5"/></svg>',
+    backup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="navicon"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>',
+    password: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="navicon"><circle cx="12" cy="10" r="3"/><path d="M12 2a10 10 0 0110 10c0 5.523-4.477 10-10 10S2 17.523 2 12c0-2.33.796-4.471 2.126-6.174L7 9m7-4l2 2m-5-3.5V6"/></svg>',
+    feemanage: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="navicon"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>'
+  };
+
+  let students = [];
+  let entries = [];
+  let route = 'dashboard';
+  let ledgerExpanded = {};
+  let ledgerFilters = { cls:'all', status:'all', q:'' };
+  let feeManageFilters = { cls:'all', q:'', currentMonthIndex: new Date().getMonth() }; 
+  let studentQ = '';
+  let editingStudentId = null;
+  let showStudentModal = false;
+  let receiptSelectedId = null;
+  let ready = false;
+  let autoBackups = []; 
+  let schoolSettings = {
+    schoolName: 'Education Key Public School',
+    address: '',
+    phone: '',
+    principalName: 'Principal',
+    instructions: '1. Admit card lana anivarya hai.\n2. Exam time se 15 minute pehle school pahunchna hai.\n3. Mobile phone allowed nahi hai.',
+    logoData: '',
+    signatureData: ''
+  };
+  let exams = [];
+  let admitFilters = { cls:'all', q:'', examId:'' };
+  let admitSelected = {};
+  let admitEditingExamId = null;
+
+  // ---- Google Sheets Remote Sync ----
+  const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbzC9XFVuUO_8bgVr8ru1x89WDS9OpqRaTWUkBASZFGa-siLW8xxD3_g5nWwkSI81xE/exec';
+  let gasUrl = '';
+  let gasUrlLocked = true;     // when true, URL field is masked/read-only in the UI
+  let gasAutoSync = false;
+  let lastGasSync = null;      // { ts, status: 'ok'|'error', message }
+  let gasBusy = false;         // true while a push/pull is in-flight
+  let gasAutoSyncTimer = null;
+  let gasErrorModalShownFor = null; // ts of the lastGasSync error we already popped up a modal for
+
+  let currentUserRole = null; 
+  let authData = {
+    admin: 'admin123',
+    user: 'user123'
+  };
+
+  const root = document.getElementById('ekps-root');
+  const contentEl = document.getElementById('ekps-content');
+  const navEl = document.getElementById('ekps-nav');
+  const titleEl = document.getElementById('ekps-title');
+  const subEl = document.getElementById('ekps-subtitle');
+  const modalRoot = document.getElementById('ekps-modal-root');
+
+  function fmt(n) { 
+    if (n < 0) {
+      return '-₹' + Math.abs(Math.round(n)).toLocaleString('en-IN');
+    }
+    return '₹' + Math.round(n).toLocaleString('en-IN'); 
+  }
+  function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function todayISO(){ const d = new Date(); return d.toISOString().slice(0,10); }
+  function fmtDate(iso){ if(!iso) return '—'; const d = new Date(iso+'T00:00:00'); if(isNaN(d)) return iso;
+    return d.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'}); }
+
+  const BILL_TYPES = ['Uniform','Books / Copy','Van / Transport','Annual Charge','Exam Fee','Late Fee','Activity / Picnic','Other'];
+  function billsTotal(s){ return Array.isArray(s.bills) ? s.bills.reduce((a,b)=>a+(parseFloat(b.amount)||0),0) : 0; }
+  function totalDue(s){ return (s.monthlyFee*12) + s.examFee + s.oldDue + s.uniformBill + s.bookBill + s.otherBill + billsTotal(s); }
+  
+  function getAcademicMonthIndex(monthName) {
+    return MONTHS.indexOf(monthName);
+  }
+  function getCurrentAcademicRunningMonthIndex() {
+    const systemMonth = new Date().getMonth(); 
+    const mapIndex = [9, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8]; 
+    return mapIndex[systemMonth];
+  }
+
+  function studentEntries(id){ return entries.filter(e => e.studentId === id); }
+  function totalPaid(id){ return studentEntries(id).reduce((a,e)=>a+e.amount,0); }
+  function monthPaid(id, month){ return studentEntries(id).filter(e=>e.month===month).reduce((a,e)=>a+e.amount,0); }
+  function statusOf(s){
+    const due = totalDue(s), paid = totalPaid(s.id), rest = due - paid;
+    if (rest <= 0) return 'Paid';
+    if (paid <= 0) return 'Due';
+    return 'Partial';
+  }
+  function restDueOf(s){ return Math.max(0, totalDue(s) - totalPaid(s.id)); }
+  function nextClassOf(cls){
+    const i = CLASS_ORDER.indexOf(cls);
+    return i >= 0 && i < CLASS_ORDER.length - 1 ? CLASS_ORDER[i+1] : '';
+  }
+  function nextStudentId(){ return students.length ? Math.max(...students.map(s=>s.id))+1 : 1; }
+  function nextExamId(){ return exams.length ? Math.max(...exams.map(e=>e.id||0))+1 : 1; }
+  function nextReceiptNo(){ const n = entries.length+1; return 'EK-' + String(n).padStart(4,'0'); }
+  function normalizeStudent(s){
+    if (!Array.isArray(s.bills)) s.bills = [];
+    if (typeof s.mobNo !== 'string') s.mobNo = s.mobNo ? String(s.mobNo) : '';
+    if (typeof s.rollNo !== 'string') s.rollNo = s.rollNo ? String(s.rollNo) : '';
+    if (typeof s.section !== 'string') s.section = s.section ? String(s.section) : '';
+    if (typeof s.dob !== 'string') s.dob = s.dob ? String(s.dob) : '';
+    if (typeof s.photoData !== 'string') s.photoData = '';
+  }
+  function readResizedImage(file, maxSize){
+    return new Promise((resolve, reject)=>{
+      if(!file) { resolve(''); return; }
+      const reader = new FileReader();
+      reader.onload = ev=>{
+        const img = new Image();
+        img.onload = ()=>{
+          const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(img.width * scale));
+          canvas.height = Math.max(1, Math.round(img.height * scale));
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.78));
+        };
+        img.onerror = reject;
+        img.src = ev.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function loadData(){
+    try {
+      const r = localStorage.getItem('ekps_students');
+      students = r ? JSON.parse(r) : SEED_STUDENTS.slice();
+    } catch(e){ students = SEED_STUDENTS.slice(); }
+    students.forEach(normalizeStudent);
+    
+    try {
+      const r = localStorage.getItem('ekps_entries');
+      entries = r ? JSON.parse(r) : [];
+    } catch(e){ entries = []; }
+    
+    try {
+      const r = localStorage.getItem('ekps_autobackups');
+      autoBackups = r ? JSON.parse(r) : [];
+    } catch(e){ autoBackups = []; }
+    
+    try {
+      const settingsStorage = localStorage.getItem('ekps_settings');
+      if(settingsStorage) schoolSettings = {...schoolSettings, ...JSON.parse(settingsStorage)};
+    } catch(e){}
+
+    try {
+      const examStorage = localStorage.getItem('ekps_exams');
+      exams = examStorage ? JSON.parse(examStorage) : [];
+      if(!Array.isArray(exams)) exams = [];
+    } catch(e){ exams = []; }
+
+    try {
+      const authStorage = localStorage.getItem('ekps_auth');
+      if(authStorage) authData = JSON.parse(authStorage);
+    } catch(e){}
+    
+    try {
+      const session = localStorage.getItem('ekps_session');
+      if(session) currentUserRole = session;
+    } catch(e){}
+
+    try {
+      gasUrl = localStorage.getItem('ekps_gas_url');
+      if (gasUrl === null) {
+        // First run — pre-fill with the school's fixed Web App URL and lock it.
+        gasUrl = DEFAULT_GAS_URL;
+        gasUrlLocked = true;
+        saveGasSettings();
+      } else {
+        const lockedFlag = localStorage.getItem('ekps_gas_locked');
+        gasUrlLocked = lockedFlag === null ? true : lockedFlag === '1';
+      }
+      gasAutoSync = localStorage.getItem('ekps_gas_autosync') === '1';
+      const lastSync = localStorage.getItem('ekps_gas_lastsync');
+      lastGasSync = lastSync ? JSON.parse(lastSync) : null;
+    } catch(e){}
+
+    ready = true;
+  }
+  
+  function saveStudents(){
+    try { localStorage.setItem('ekps_students', JSON.stringify(students)); }
+    catch(e){ console.error('save students failed', e); }
+    maybeAutoBackup();
+    maybeAutoSyncSheet();
+  }
+  function saveEntries(){
+    try { localStorage.setItem('ekps_entries', JSON.stringify(entries)); }
+    catch(e){ console.error('save entries failed', e); }
+    maybeAutoBackup();
+    maybeAutoSyncSheet();
+  }
+  function saveAuth(){
+    try { localStorage.setItem('ekps_auth', JSON.stringify(authData)); } catch(e){}
+  }
+  function saveSettings(){
+    try { localStorage.setItem('ekps_settings', JSON.stringify(schoolSettings)); }
+    catch(e){ console.error('save settings failed', e); }
+    maybeAutoBackup();
+    maybeAutoSyncSheet();
+  }
+  function saveExams(){
+    try { localStorage.setItem('ekps_exams', JSON.stringify(exams)); }
+    catch(e){ console.error('save exams failed', e); }
+    maybeAutoBackup();
+    maybeAutoSyncSheet();
+  }
+
+  const AUTO_BACKUP_MIN_GAP_MS = 3 * 60 * 1000; 
+  const AUTO_BACKUP_KEEP = 5;
+  function saveAutoBackups(){
+    try { localStorage.setItem('ekps_autobackups', JSON.stringify(autoBackups)); }
+    catch(e){ console.error('save autobackups failed', e); }
+  }
+  function snapshotNow(){
+    autoBackups.push({
+      ts: Date.now(),
+      students: JSON.parse(JSON.stringify(students)),
+      entries: JSON.parse(JSON.stringify(entries)),
+      settings: JSON.parse(JSON.stringify(schoolSettings)),
+      exams: JSON.parse(JSON.stringify(exams)),
+    });
+    if (autoBackups.length > AUTO_BACKUP_KEEP) autoBackups = autoBackups.slice(-AUTO_BACKUP_KEEP);
+    saveAutoBackups();
+  }
+  function maybeAutoBackup(){
+    if (!ready) return;
+    const last = autoBackups.length ? autoBackups[autoBackups.length-1].ts : 0;
+    if (Date.now() - last < AUTO_BACKUP_MIN_GAP_MS) return;
+    snapshotNow();
+  }
+  setInterval(()=>{ if (ready) maybeAutoBackup(); }, 5 * 60 * 1000);
+
+  // ---------------------------------------------------------------------
+  // Google Sheets Remote Sync (via Google Apps Script bridge)
+  // ---------------------------------------------------------------------
+  function saveGasSettings(){
+    try {
+      localStorage.setItem('ekps_gas_url', gasUrl || '');
+      localStorage.setItem('ekps_gas_autosync', gasAutoSync ? '1' : '0');
+      localStorage.setItem('ekps_gas_locked', gasUrlLocked ? '1' : '0');
+    } catch(e){}
+  }
+  function saveGasLastSync(){
+    try { localStorage.setItem('ekps_gas_lastsync', JSON.stringify(lastGasSync)); }
+    catch(e){}
+  }
+  function buildSyncPayload(){
+    return {
+      app: 'Education Key Public School — Fee Manager',
+      exportedAt: new Date().toISOString(),
+      students, entries, settings: schoolSettings, exams
+    };
+  }
+
+  // Push local data -> Google Sheet. silent=true skips toasts/re-render (used by auto-sync).
+  async function pushToSheet(silent){
+    if (!gasUrl) { if(!silent) toast('Pehle Apps Script Web App URL save karein'); return; }
+    if (gasBusy) return;
+    gasBusy = true;
+    renderGasStatusBadge();
+    if (!silent) renderBackup();
+    try {
+      const res = await fetch(gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'push', payload: buildSyncPayload() })
+      });
+      const raw = await res.text();
+      let data;
+      try { data = JSON.parse(raw); } catch(parseErr){ data = null; }
+      if (data && data.status === 'ok') {
+        lastGasSync = { ts: Date.now(), status: 'ok', message: 'Upload safal', dir: 'push' };
+        if (!silent) toast('Google Sheet par upload ho gaya');
+      } else {
+        const msg = extractGasErrorMessage(data, raw, res.status);
+        lastGasSync = { ts: Date.now(), status: 'error', message: msg, dir: 'push' };
+        if (!silent) toast('Upload fail: ' + msg);
+      }
+    } catch(err){
+      lastGasSync = { ts: Date.now(), status: 'error', message: err.message || 'Network error', dir: 'push' };
+      if (!silent) toast('Upload fail — URL ya internet check karein');
+    }
+    gasBusy = false;
+    saveGasLastSync();
+    renderGasStatusBadge();
+    if (!silent) renderBackup();
+    if (silent) maybeShowGasSyncIssueModal();
+  }
+
+  // Pull data from Google Sheet -> overwrite local data (like restore).
+  // Pulls a human-readable message out of whatever the Apps Script endpoint returned —
+  // our own {status,message} shape, Google's own {error:{message,status,code}} envelope
+  // (returned when the deployment itself rejects the request, e.g. wrong Access setting),
+  // or raw non-JSON text (e.g. an HTML login/consent page).
+  function extractGasErrorMessage(data, raw, httpStatus){
+    if (data && data.message) return data.message;
+    if (data && data.error && data.error.message) {
+      return data.error.message + (data.error.status ? ' (' + data.error.status + ')' : '') +
+        ' — Apps Script deployment ki "Who has access" setting "Anyone" par set hai ya nahi check karein.';
+    }
+    if (!data && raw && /accounts\.google\.com|Sign in|Authorization required/i.test(raw)) {
+      return 'Google login/authorization page mila, JSON nahi — deployment "Execute as: Me" aur "Who has access: Anyone" set karke firse deploy (New deployment) karein.';
+    }
+    if (!data) return 'Server se JSON response nahi mila (HTTP ' + httpStatus + '). Web App URL sahi hai ya nahi check karein.';
+    return 'Unknown error (HTTP ' + httpStatus + ')';
+  }
+
+  async function pullFromSheet(){
+    if (!gasUrl) { toast('Pehle Apps Script Web App URL save karein'); return; }
+    if (gasBusy) return;
+    gasBusy = true;
+    renderGasStatusBadge();
+    renderBackup();
+    try {
+      const res = await fetch(gasUrl + (gasUrl.includes('?') ? '&' : '?') + 'action=pull');
+      const raw = await res.text();
+      let data;
+      try { data = JSON.parse(raw); } catch(parseErr){ data = null; }
+      if (!data || data.status !== 'ok') {
+        const msg = extractGasErrorMessage(data, raw, res.status);
+        lastGasSync = { ts: Date.now(), status: 'error', message: msg, dir: 'pull' };
+        toast('Download fail: ' + msg);
+      } else {
+        const incomingStudents = Array.isArray(data.students) ? data.students : [];
+        const incomingEntries = Array.isArray(data.entries) ? data.entries : [];
+        const ok = confirm(`Google Sheet se restore karein? Isse maujooda ${students.length} students aur ${entries.length} entries hat jayengi, aur Sheet ke ${incomingStudents.length} students / ${incomingEntries.length} entries aa jayengi.`);
+        if (ok) {
+          incomingStudents.forEach(normalizeStudent);
+          students = incomingStudents;
+          entries = incomingEntries;
+          schoolSettings = {...schoolSettings, ...(data.settings || {})};
+          exams = Array.isArray(data.exams) ? data.exams : [];
+          saveStudents(); saveEntries(); saveSettings(); saveExams();
+          lastGasSync = { ts: Date.now(), status: 'ok', message: 'Download safal', dir: 'pull' };
+          toast('Google Sheet se data restore ho gaya');
+        } else {
+          gasBusy = false;
+          renderGasStatusBadge();
+          renderBackup();
+          return;
+        }
+      }
+    } catch(err){
+      lastGasSync = { ts: Date.now(), status: 'error', message: err.message || 'Network error', dir: 'pull' };
+      toast('Download fail — URL ya internet check karein');
+    }
+    gasBusy = false;
+    saveGasLastSync();
+    renderGasStatusBadge();
+    renderBackup();
+  }
+
+  // Debounced auto-push, called opportunistically whenever local data is saved.
+  function maybeAutoSyncSheet(){
+    if (!ready || !gasAutoSync || !gasUrl) return;
+    clearTimeout(gasAutoSyncTimer);
+    gasAutoSyncTimer = setTimeout(()=> pushToSheet(true), 4000);
+  }
+
+  // Small always-visible status pill in the topbar, updated after every sync attempt.
+  function renderGasStatusBadge(){
+    const badge = document.getElementById('ekps-gas-badge');
+    if (!badge) return;
+    if (!gasUrl || !currentUserRole) { badge.style.display = 'none'; return; }
+    badge.style.display = 'inline-flex';
+    badge.onclick = () => { route = 'backup'; render(); };
+    if (gasBusy) {
+      badge.style.background = 'var(--amber-bg)'; badge.style.color = 'var(--amber)';
+      badge.textContent = '⏳ Sheets: Syncing…';
+    } else if (!lastGasSync) {
+      badge.style.background = 'var(--border-strong)'; badge.style.color = 'var(--slate)';
+      badge.textContent = '○ Sheets: Not synced';
+    } else if (lastGasSync.status === 'ok') {
+      badge.style.background = 'var(--green-bg)'; badge.style.color = 'var(--green)';
+      badge.textContent = '☁ Sheets: Synced';
+    } else {
+      badge.style.background = 'var(--rust-bg)'; badge.style.color = 'var(--rust)';
+      badge.textContent = '⚠ Sheets: Sync issue';
+    }
+  }
+
+  // Pops up a blocking modal offering to retry when a sync attempt has failed,
+  // so a broken sync doesn't silently sit there unnoticed.
+  function maybeShowGasSyncIssueModal(){
+    if (!gasUrl || currentUserRole !== 'admin') return;
+    if (!lastGasSync || lastGasSync.status !== 'error') return;
+    if (gasErrorModalShownFor === lastGasSync.ts) return;
+    if (modalRoot.innerHTML.trim() !== '') return; // don't clobber a modal already open
+    gasErrorModalShownFor = lastGasSync.ts;
+    gasSyncIssueModal();
+  }
+
+  function gasSyncIssueModal(){
+    const dirLabel = lastGasSync && lastGasSync.dir === 'pull' ? 'Download (Sheet se)' : 'Upload (Sheet par)';
+    modalRoot.innerHTML = `
+      <div class="modal-backdrop" id="ekps-gasissue-bg">
+        <div class="modal" style="width: 420px;">
+          <div class="modal-head"><h3>⚠ Google Sheets Sync Ruk Gaya</h3><div class="icon-btn" id="ekps-gasissue-close">✕</div></div>
+          <div class="modal-body">
+            <p style="font-size:13px; color:var(--ink); margin:0 0 10px 0; line-height:1.6;">
+              Last <b>${dirLabel}</b> attempt fail ho gayi. Aapka data abhi bhi is device par safe hai (localStorage me),
+              lekin Google Sheet ke sath sync nahi ho paya.
+            </p>
+            <div class="pick-preview" style="display:block; border-color:#EAD0C6; background:var(--rust-bg); color:var(--rust);">
+              ${esc(lastGasSync ? lastGasSync.message : 'Unknown error')}
+            </div>
+          </div>
+          <div class="modal-foot">
+            <span class="btn btn-ghost" id="ekps-gasissue-later">Baad me dekhenge</span>
+            <span class="btn btn-accent" id="ekps-gasissue-retry">🔄 Force Sync Now</span>
+          </div>
+        </div>
+      </div>`;
+    const close = ()=>{ modalRoot.innerHTML=''; };
+    document.getElementById('ekps-gasissue-bg').addEventListener('click', e=>{ if(e.target.id==='ekps-gasissue-bg') close(); });
+    document.getElementById('ekps-gasissue-close').addEventListener('click', close);
+    document.getElementById('ekps-gasissue-later').addEventListener('click', close);
+    document.getElementById('ekps-gasissue-retry').addEventListener('click', async ()=>{
+      close();
+      await pushToSheet(false);
+      renderGasStatusBadge();
+      maybeShowGasSyncIssueModal();
+    });
+  }
+
+  function toast(msg){
+    const t = document.getElementById('ekps-toast');
+    document.getElementById('ekps-toast-text').textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(()=>t.classList.remove('show'), 2200);
+  }
+
+  function renderLoginView(){
+    contentEl.innerHTML = `
+      <div style="display: flex; justify-content: center; align-items: center; padding: 40px 0;">
+        <div class="panel" style="width: 400px; max-width: 100%;">
+          <div class="panel-head" style="justify-content: center;">
+            <h3 style="font-size: 16px;">🔐 Fee Manager Secure Login</h3>
+          </div>
+          <div class="panel-body">
+            <div class="field">
+              <label>Select Role / Username</label>
+              <select id="login-role">
+                <option value="admin">Admin (Full Control)</option>
+                <option value="user">User (Collection & Ledger Only)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input type="password" id="login-pass" placeholder="Enter password..."/>
+              <div class="hint">Default passwords are admin123 and user123</div>
+            </div>
+            <button class="btn btn-primary" id="login-submit-btn" style="width: 100%; justify-content: center; margin-top: 10px;">Login</button>
+          </div>
+        </div>
+      </div>`;
+    
+    titleEl.textContent = "Authentication Required";
+    subEl.textContent = "Please verify your credentials to access application parameters.";
+    document.getElementById('ekps-logout-btn').style.display = 'none';
+    document.getElementById('ekps-role-badge').style.display = 'none';
+    navEl.innerHTML = '';
+
+    document.getElementById('login-submit-btn').addEventListener('click', () => {
+      const role = document.getElementById('login-role').value;
+      const pass = document.getElementById('login-pass').value;
+      if(authData[role] === pass){
+        currentUserRole = role;
+        localStorage.setItem('ekps_session', role);
+        toast('Login Successful as ' + role);
+        route = 'dashboard';
+        render();
+      } else {
+        toast('Incorrect Password! Kripya sahi password dalein.');
+      }
+    });
+  }
+
+  function passwordManagementModal(){
+    const isAdmin = currentUserRole === 'admin';
+    modalRoot.innerHTML = `
+      <div class="modal-backdrop" id="ekps-pass-bg">
+        <div class="modal" style="width: 420px;">
+          <div class="modal-head"><h3>🔐 Manage Passwords</h3><div class="icon-btn" id="ekps-pass-close">✕</div></div>
+          <div class="modal-body">
+            <h4 style="margin: 0 0 12px 0; font-size: 13px; color: var(--ink-2);">Change Your Current Password</h4>
+            <div class="field">
+              <label>New Password</label>
+              <input type="password" id="p-new" placeholder="Enter new password"/>
+            </div>
+            <div class="field">
+              <label>Confirm New Password</label>
+              <input type="password" id="p-conf" placeholder="Re-type new password"/>
+            </div>
+            <div class="field">
+              <button class="btn btn-accent" id="ekps-change-own-pass" style="width:100%; justify-content:center;">Update My Password</button>
+            </div>
+            
+            ${isAdmin ? `
+              <div style="margin-top: 20px; border-top: 1px dashed var(--border-strong); padding-top: 16px;">
+                <h4 style="margin: 0 0 12px 0; font-size: 13px; color: var(--rust);">Admin Controls: Reset User Password</h4>
+                <div class="field">
+                  <label>Set Staff/User Password</label>
+                  <input type="password" id="p-user-reset" placeholder="Enter new password for standard User"/>
+                </div>
+                <button class="btn btn-primary" id="ekps-reset-user-pass" style="width:100%; justify-content:center;">Reset User Password</button>
+              </div>
+            ` : ''}
+          </div>
+          <div class="modal-foot">
+            <span class="btn btn-ghost" id="ekps-pass-cancel">Close</span>
+          </div>
+        </div>
+      </div>`;
+
+    const close = ()=>{ modalRoot.innerHTML=''; };
+    document.getElementById('ekps-pass-bg').addEventListener('click', e=>{ if(e.target.id==='ekps-pass-bg') close(); });
+    document.getElementById('ekps-pass-close').addEventListener('click', close);
+    document.getElementById('ekps-pass-cancel').addEventListener('click', close);
+    
+    document.getElementById('ekps-change-own-pass').addEventListener('click', ()=>{
+      const n = document.getElementById('p-new').value.trim();
+      const c = document.getElementById('p-conf').value.trim();
+      if(!n){ toast('Password khali nahi ho sakta'); return; }
+      if(n !== c){ toast('Passwords match nahi ho rahe'); return; }
+      authData[currentUserRole] = n;
+      saveAuth();
+      toast('Aapka Password update ho gaya hai');
+      close();
+    });
+
+    if(isAdmin){
+      document.getElementById('ekps-reset-user-pass').addEventListener('click', ()=>{
+        const up = document.getElementById('p-user-reset').value.trim();
+        if(!up){ toast('User password dalein'); return; }
+        authData['user'] = up;
+        saveAuth();
+        toast('Staff/User password reset ho gaya');
+        close();
+      });
+    }
+  }
+
+  const NAV = [
+    {id:'dashboard', label:'Dashboard', icon:'dashboard', roles:['admin', 'user']},
+    {id:'collect', label:'Fee Collection', icon:'collect', roles:['admin', 'user']},
+    {id:'students', label:'Students', icon:'students', roles:['admin']},
+    {id:'feemanage', label:'Fee Management', icon:'feemanage', roles:['admin', 'user']}, 
+    {id:'promotion', label:'Session Promotion', icon:'students', roles:['admin']},
+    {id:'admit', label:'Admit Card', icon:'receipts', roles:['admin']},
+    {id:'ledger', label:'Fee Ledger', icon:'ledger', roles:['admin', 'user']},
+    {id:'receipts', label:'Receipts', icon:'receipts', roles:['admin', 'user']},
+    {id:'backup', label:'Backup & Restore', icon:'backup', roles:['admin']},
+  ];
+  const TITLES = {
+    dashboard: ['Dashboard','Realtime fee collection overview'],
+    collect: ['Fee Collection','Record a new fee payment entry'],
+    students: ['Students','Manage student fee master data'],
+    feemanage: ['Fee Management','Current Month wise demand bills and multi-level due statement generator'], 
+    promotion: ['Session Promotion','Bulk class upgrade with carry-forward dues'],
+    admit: ['Admit Card','Exam admit cards, school settings and print manager'],
+    ledger: ['Fee Ledger','Class-wise dues & payment status'],
+    receipts: ['Receipts','Look up and print a payment receipt'],
+    backup: ['Backup & Restore','Automatic snapshots + manual download/restore'],
+  };
+
+  function renderNav(){
+    const allowedNav = NAV.filter(n => n.roles.includes(currentUserRole));
+    
+    let navHtml = allowedNav.map(n => `
+      <div class="navitem ${route===n.id?'active':''}" data-route="${n.id}">
+        ${ICONS[n.icon]}<span>${n.label}</span>
+      </div>`).join('');
+      
+    navHtml += `
+      <div class="navitem" id="nav-pass-manage" style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
+        ${ICONS.password}<span>Manage Password</span>
+      </div>`;
+
+    navEl.innerHTML = navHtml;
+    navEl.querySelectorAll('.navitem').forEach(el => {
+      if(el.id === 'nav-pass-manage'){
+        el.addEventListener('click', () => passwordManagementModal());
+      } else {
+        el.addEventListener('click', () => { route = el.dataset.route; render(); });
+      }
+    });
+  }
+
+  function go(r){ 
+    const targetNav = NAV.find(n => n.id === r);
+    if(targetNav && !targetNav.roles.includes(currentUserRole)){
+      toast('Access Denied: Aap is section ko open nahi kar sakte.');
+      return;
+    }
+    route = r; 
+    render(); 
+  }
+
+  /* ---------- CALCULATE LEVEL-WISE DUE LOGIC ---------- */
+  function calculateDueStatus(s, upToMonthIndex) {
+    const totalPaidAmt = totalPaid(s.id);
+    
+    const totalSaalDemand = totalDue(s);
+    const totalRestAmount = totalSaalDemand - totalPaidAmt;
+
+    const monthsUptoCurrent = upToMonthIndex + 1; 
+    const baseExtraCharges = s.examFee + s.oldDue + s.uniformBill + s.bookBill + s.otherBill + billsTotal(s);
+    const demandUptoCurrentMonth = (s.monthlyFee * monthsUptoCurrent) + baseExtraCharges;
+    
+    const uptoMonthRestAmount = demandUptoCurrentMonth - totalPaidAmt;
+
+    return {
+      totalRestAmount,
+      uptoMonthRestAmount,
+      isAdvanceCleared: totalRestAmount <= 0
+    };
+  }
+
+  /* ---------- RENDER FEE MANAGEMENT OPTION ---------- */
+  function renderFeeManagement(){
+    const classes = ['all', ...CLASS_ORDER.filter(c => students.some(s => s.cls === c))];
+    
+    if(feeManageFilters.currentMonthIndex === undefined || feeManageFilters.currentMonthIndex === null || feeManageFilters.currentMonthIndex === new Date().getMonth()) {
+      feeManageFilters.currentMonthIndex = getCurrentAcademicRunningMonthIndex();
+    }
+
+    let list = students.filter(s => {
+      if (feeManageFilters.cls !== 'all' && s.cls !== feeManageFilters.cls) return false;
+      if (feeManageFilters.q && !s.name.toLowerCase().includes(feeManageFilters.q.toLowerCase()) && !String(s.id).includes(feeManageFilters.q)) return false;
+      return true;
+    }).sort((a,b) => CLASS_ORDER.indexOf(a.cls) - CLASS_ORDER.indexOf(b.cls) || a.id - b.id);
+
+    contentEl.innerHTML = `
+      <div class="toolbar">
+        <div class="search-wrap">${ICONS.search}<input type="text" id="ekps-feemanage-search" placeholder="Student Name/ID Search..." value="${esc(feeManageFilters.q)}"/></div>
+        <select id="ekps-feemanage-cls">${classes.map(c => `<option value="${c}" ${c===feeManageFilters.cls?'selected':''}>${c==='all'?'All Classes':c}</option>`).join('')}</select>
+        
+        <div style="display:flex; align-items:center; gap:6px;">
+          <label style="font-size:11px; font-weight:700; color:var(--slate); text-transform:uppercase;">Select Running Month:</label>
+          <select id="ekps-feemanage-running-month">
+            ${MONTHS.map((m, idx) => `<option value="${idx}" ${idx === parseInt(feeManageFilters.currentMonthIndex)?'selected':''}>${m}</option>`).join('')}
+          </select>
+        </div>
+
+        <span style="flex:1"></span>
+        <span class="btn btn-accent" id="ekps-print-all-demand">🧾 Print Filtered Upto Due Demand Slips</span>
+      </div>
+      
+      <div class="panel">
+        <div class="panel-body" style="padding:0; overflow:auto;">
+          <table class="data">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Class</th>
+                <th>Name</th>
+                <th>Monthly Fee</th>
+                <th>Total Due</th>
+                <th style="background:#FFF5F2; color:var(--rust);">Upto Selected Month Rest</th>
+                <th style="background:#EBF7EE; color:var(--green);">Full Session Rest</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${list.length ? list.map(s => {
+                const duesData = calculateDueStatus(s, parseInt(feeManageFilters.currentMonthIndex));
+                const fullYearDue = totalDue(s);
+
+                return `<tr>
+                  <td><span class="id-chip">${s.id}</span></td>
+                  <td><span class="cls-chip">${esc(s.cls)}</span></td>
+                  <td style="font-weight:600;">${esc(s.name)}</td>
+                  <td class="mono">${fmt(s.monthlyFee)}</td>
+                  <td class="mono" style="font-weight:600; color:var(--slate);">${fmt(fullYearDue)}</td>
+                  <td class="mono" style="font-weight:700; color:var(--rust); background:#FFFDFB;">${fmt(duesData.uptoMonthRestAmount)}</td>
+                  <td class="mono" style="font-weight:700; color:var(--green); background:#FBFEFC;">${fmt(duesData.totalRestAmount)}</td>
+                  <td>
+                    <span class="btn btn-ghost btn-sm" data-demand-bill="${s.id}" style="white-space:nowrap;">📄 Demand Bill</span>
+                  </td>
+                </tr>`;
+              }).join('') : `<tr><td colspan="8"><div class="empty-state">Koi student ya data nahi mila.</div></td></tr>`}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+
+    document.getElementById('ekps-feemanage-search').addEventListener('input', e => { feeManageFilters.q = e.target.value; renderFeeManagement(); });
+    document.getElementById('ekps-feemanage-cls').addEventListener('change', e => { feeManageFilters.cls = e.target.value; renderFeeManagement(); });
+    document.getElementById('ekps-feemanage-running-month').addEventListener('change', e => { feeManageFilters.currentMonthIndex = parseInt(e.target.value); renderFeeManagement(); });
+    
+    contentEl.querySelectorAll('[data-demand-bill]').forEach(el => {
+      el.addEventListener('click', () => {
+        const id = parseInt(el.dataset.demandBill);
+        const s = students.find(x => x.id === id);
+        if(!s) return;
+        generateSingleDemandBill(s, parseInt(feeManageFilters.currentMonthIndex));
+      });
+    });
+
+    document.getElementById('ekps-print-all-demand').addEventListener('click', () => {
+      if(!list.length) { toast('Printing ke liye koi student filtered nahi hai.'); return; }
+      generateBulkDemandBills(list, parseInt(feeManageFilters.currentMonthIndex));
+    });
+  }
+
+  function generateSingleDemandBill(s, currentMonthIndex) {
+    const dues = calculateDueStatus(s, currentMonthIndex);
+    const win = window.open('', '_blank');
+    if (!win) { toast('Popup blocker active hai! Please disable krein.'); return; }
+    
+    const extraAdmissionCharges = s.examFee + s.uniformBill + s.bookBill + s.otherBill + billsTotal(s);
+    
+    let masterMonthlyFeeSum = s.oldDue + extraAdmissionCharges; 
+    let masterPaidAmountSum = 0; 
+    let masterDueRestSum = s.oldDue + extraAdmissionCharges;
+
+    let monthRowsHtml = MONTHS.map((m, idx) => {
+      const paidInMonth = monthPaid(s.id, m);
+      const restAmount = s.monthlyFee - paidInMonth;
+      
+      masterMonthlyFeeSum += s.monthlyFee;
+      masterPaidAmountSum += paidInMonth;
+      masterDueRestSum += restAmount;
+      
+      const isRunningMarker = idx <= currentMonthIndex ? '<b>*</b>' : '';
+      return `<tr><td>${m} ${isRunningMarker}</td><td>₹${s.monthlyFee}</td><td>₹${paidInMonth}</td><td>${fmt(restAmount)}</td></tr>`;
+    }).join('');
+
+    win.document.write(`
+      <html><head><title>Demand Bill - ${s.name}</title>
+      <style>
+        body { font-family: Arial, sans-serif; color: #1B2A4A; padding: 20px; }
+        .bill-box { border: 2px solid #1B2A4A; padding: 20px; border-radius: 8px; max-width: 650px; margin: 0 auto; }
+        .header { text-align: center; border-bottom: 2px dashed #D6D0BF; padding-bottom: 10px; margin-bottom: 15px; }
+        .header h2 { margin: 0; font-size: 22px; text-transform: uppercase; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        th, td { border: 1px solid #5B6B82; padding: 8px; text-align: left; }
+        th { background: #F4F1E9; }
+        .total-row { font-weight: bold; font-size: 14px; }
+        .total-row.summary-total { background: #EFEBDD; color: #1B2A4A; border-top: 2px solid #1B2A4A; border-bottom: 2px solid #1B2A4A; }
+        .total-row.upto { background: #FBEAE4; color: #C1502E; }
+        .total-row.full { background: #E7F4EC; color: #2F8F5B; }
+        .foot { margin-top: 30px; display: flex; justify-content: space-between; font-size: 12px; }
+        .sign { border-top: 1px solid #1B2A4A; width: 150px; text-align: center; padding-top: 5px; }
+      </style></head>
+      <body>
+        <div class="bill-box">
+          <div class="header">
+            <h2>${schoolSettings.schoolName}</h2>
+            <div>${schoolSettings.address || ''} ${schoolSettings.phone ? ' | Ph: ' + schoolSettings.phone : ''}</div>
+            <strong style="display:inline-block; margin-top:8px; background:#E8A33D; padding:4px 10px; border-radius:4px;">MONTHLY DEMAND BILL / DUE STATEMENT</strong>
+          </div>
+          <div class="info-grid">
+            <div><strong>Student ID:</strong> ${s.id}</div>
+            <div><strong>Target Running Month:</strong> ${MONTHS[currentMonthIndex]}</div>
+            <div><strong>Student Name:</strong> ${s.name}</div>
+            <div><strong>Class:</strong> ${s.cls} ${s.section ? '('+s.section+')' : ''}</div>
+            <div><strong>Roll No:</strong> ${s.rollNo || '—'}</div>
+            <div><strong>Mobile:</strong> ${s.mobNo || '—'}</div>
+          </div>
+          <h3>Month-wise Fee & Carry Dues Status</h3>
+          <table>
+            <thead><tr><th>Fee Parameters / Months</th><th>Monthly Fee</th><th>Paid Amount</th><th>Due Status / Rest</th></tr></thead>
+            <tbody>
+              <!-- Primary Priority Upper Parameters -->
+              <tr style="background: #FDFBF7;"><td><b>Old Session Carry Dues</b></td><td>₹${s.oldDue}</td><td>—</td><td>${fmt(s.oldDue)}</td></tr>
+              <tr style="background: #FDFBF7;"><td><b>Admission/Exam/Misc Charges</b></td><td>₹${extraAdmissionCharges}</td><td>—</td><td>${fmt(extraAdmissionCharges)}</td></tr>
+              
+              <!-- Month-wise Parameters -->
+              ${monthRowsHtml}
+              
+              <!-- Vertical Grand Sum Total Row -->
+              <tr class="total-row summary-total">
+                <td><b>Upar se Niche tak Sabhi ka Jod:</b></td>
+                <td><b>${fmt(masterMonthlyFeeSum)}</b></td>
+                <td><b>${fmt(masterPaidAmountSum)}</b></td>
+                <td><b>${fmt(masterDueRestSum)}</b></td>
+              </tr>
+              
+              <tr class="total-row upto"><td colspan="3">1. UPTO RUNNING MONTH REST DUE:</td><td><b>${fmt(dues.uptoMonthRestAmount)}</b></td></tr>
+              <tr class="total-row full"><td colspan="3">2. FULL ACADEMIC SESSION TOTAL REST DUE:</td><td><b>${fmt(dues.totalRestAmount)}</b></td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:11px; color:#5B6B82; margin-top:15px;">* Note: (<b>*</b>) Mark wale mahine current active timeline bills ko darshate hain. Advance payment hone par 'Due Status / Rest' ya Total amounts negative (-) me show ho sakte hain.</p>
+          <div class="foot">
+            <div>Parent/Guardian Sign</div>
+            <div class="sign">Accounts Office / Principal</div>
+          </div>
+        </div>
+      </body></html>
+    `);
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 250);
+  }
+
+  function generateBulkDemandBills(list, currentMonthIndex) {
+    const win = window.open('', '_blank');
+    if (!win) { toast('Popup blocker active hai!'); return; }
+    
+    let masterHtml = '';
+    list.forEach(s => {
+      const dues = calculateDueStatus(s, currentMonthIndex);
+      masterHtml += `
+        <div class="bill-box">
+          <div class="header">
+            <h2>${schoolSettings.schoolName}</h2>
+            <strong style="display:inline-block; margin-top:4px; background:#E8A33D; padding:2px 8px; font-size:11px; border-radius:4px;">FEE DEMAND SLIP</strong>
+          </div>
+          <div class="info-grid">
+            <div>\<strong>ID:</strong> ${s.id} | <strong>Class:</strong> ${s.cls}</div>
+            <div><strong>Upto Month:</strong> ${MONTHS[currentMonthIndex]}</div>
+            <div style="grid-column: span 2;"><strong>Name:</strong> ${s.name}</div>
+          </div>
+          <table>
+            <thead><tr><th>Fee Parameters</th><th>Rest Due Status</th></tr></thead>
+            <tbody>
+              <tr><td>Upto ${MONTHS[currentMonthIndex]} Due (Inc. Extra Charges)</td><td><b>${fmt(dues.uptoMonthRestAmount)}</b></td></tr>
+              <tr class="total-row"><td style="background:#E7F4EC;">Full Session Net Rest Amount</td><td style="background:#E7F4EC;"><b>${fmt(dues.totalRestAmount)}</b></td></tr>
+            </tbody>
+          </table>
+          <div class="foot">
+            <div style="font-size:8px; color: #5B6B82;">Generated on: ${fmtDate(todayISO())}</div>
+            <div class="sign" style="width:90px; margin-top:10px; font-size:9px;">Office Copy</div>
+          </div>
+        </div>`;
+    });
+
+    win.document.write(`
+      <html><head><title>Bulk Filtered Demand Slips</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 10px; }
+        .bill-box { border: 1px dashed #1B2A4A; padding: 12px; width: 47%; display: inline-block; vertical-align: top; margin: 1%; box-sizing: border-box; font-size: 11px; page-break-inside: avoid; }
+        .header { text-align: center; margin-bottom: 6px; }
+        .header h2 { margin: 0; font-size: 13px; text-transform:uppercase; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin-bottom: 6px; }
+        table { width: 100%; border-collapse: collapse; font-size: 10px; }
+        th, td { border: 1px solid #5B6B82; padding: 5px; text-align: left; }
+        .total-row { font-weight: bold; color: #2F8F5B; }
+        .foot { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px; }
+        .sign { border-top: 1px solid #333; text-align: center; }
+        @media print { .bill-box { page-break-inside: avoid; } }
+      </style></head>
+      <body>
+        <div style="width:100%;">${masterHtml}</div>
+      </body></html>
+    `);
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 350);
+  }
+
+  /* ---------- DASHBOARD ---------- */
+  function renderDashboard(){
+    const demand = students.reduce((a,s)=>a+totalDue(s),0);
+    const collected = students.reduce((a,s)=>a+totalPaid(s.id),0);
+    const pending = demand - collected;
+    const paidCount = students.filter(s=>statusOf(s)==='Paid').length;
+
+    const byClass = {};
+    students.forEach(s=>{
+      byClass[s.cls] = byClass[s.cls] || {due:0, paid:0};
+      byClass[s.cls].due += totalDue(s);
+      byClass[s.cls].paid += totalPaid(s.id);
+    });
+    const maxDue = Math.max(1, ...Object.values(byClass).map(v=>v.due));
+    const classRows = CLASS_ORDER.filter(c=>byClass[c]).map(c=>{
+      const v = byClass[c];
+      return `<div class="classbar-row">
+        <div class="classbar-label">${c}</div>
+        <div class="classbar-track"><div class="classbar-fill" style="width:${Math.max(4, (v.due/maxDue)*100)}%"></div></div>
+        <div class="classbar-val">${fmt(v.due-v.paid)} due</div>
+      </div>`;
+    }).join('') || `<div class="empty-state">Koi class data nahi</div>`;
+
+    const recent = entries.slice().sort((a,b)=> (b.date||'').localeCompare(a.date||'') || b.id-a.id).slice(0,6);
+    const recentRows = recent.map(e=>{
+      const s = students.find(x=>x.id===e.studentId);
+      return `<div class="recent-row">
+        <div><div class="recent-name">${esc(s?s.name:'Unknown')}</div>
+        <div class="recent-meta">${esc(e.month)} &middot; ${fmtDate(e.date)} &middot; ${esc(e.receiptNo)}</div></div>
+        <div class="recent-amt">+${fmt(e.amount)}</div>
+      </div>`;
+    }).join('') || `<div class="empty-state" style="padding:24px 10px;">Abhi tak koi entry nahi hui.<br><span class="hint">Fee Collection tab se pehli entry daalein.</span></div>`;
+
+    contentEl.innerHTML = `
+      <div class="kpi-grid">
+        <div class="kpi-card" style="--accent:var(--ink)">
+          <div class="kpi-label">Total Estimated Demand</div>
+          <div class="kpi-value">${fmt(demand)}</div>
+          <div class="kpi-note">${students.length} students enrolled</div>
+        </div>
+        <div class="kpi-card" style="--accent:var(--green)">
+          <div class="kpi-label">Total Collected</div>
+          <div class="kpi-value">${fmt(collected)}</div>
+          <div class="kpi-note">${entries.length} entries recorded</div>
+        </div>
+        <div class="kpi-card" style="--accent:var(--rust)">
+          <div class="kpi-label">Net Dues Pending</div>
+          <div class="kpi-value">${fmt(pending)}</div>
+          <div class="kpi-note">${students.length-paidCount} students with dues</div>
+        </div>
+        <div class="kpi-card" style="--accent:var(--saffron)">
+          <div class="kpi-label">Fully Paid</div>
+          <div class="kpi-value">${paidCount} / ${students.length}</div>
+          <div class="kpi-note">${students.length? Math.round(paidCount/students.length*100):0}% students clear</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-head"><h3>Class-wise Pending Dues</h3></div>
+          <div class="panel-body">${classRows}</div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Recent Collections</h3>
+            <span class="btn btn-ghost btn-sm" id="ekps-goto-collect">+ New Entry</span></div>
+          <div class="panel-body">${recentRows}</div>
+        </div>
+      </div>`;
+    document.getElementById('ekps-goto-collect').addEventListener('click', ()=>go('collect'));
+  }
+
+  /* ---------- FEE COLLECTION ---------- */
+  function renderCollect(){
+    const recent = entries.slice().sort((a,b)=> b.id-a.id).slice(0,8);
+    contentEl.innerHTML = `
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-head"><h3>New Fee Entry</h3><span class="id-chip">${nextReceiptNo()}</span></div>
+          <div class="panel-body">
+            <div class="field">
+              <label>Student</label>
+              <input type="text" id="ekps-student-input" list="ekps-student-list" placeholder="ID ya naam type karein&hellip;" autocomplete="off"/>
+              <datalist id="ekps-student-list">
+                ${students.map(s=>`<option value="${s.id} — ${esc(s.name)} (${esc(s.cls)})">`).join('')}
+              </datalist>
+            </div>
+            <div class="pick-preview" id="ekps-pick-preview"></div>
+            <div class="form-grid">
+              <div class="field">
+                <label>Month</label>
+                <select id="ekps-month-input">
+                  <option value="">Select month</option>
+                  ${MONTHS.map(m=>`<option value="${m}">${m}</option>`).join('')}
+                </select>
+              </div>
+              <div class="field">
+                <label>Paid Amount (₹)</label>
+                <input type="number" id="ekps-amount-input" min="1" placeholder="e.g. 800"/>
+              </div>
+              <div class="field">
+                <label>Payment Date</label>
+                <input type="date" id="ekps-date-input" value="${todayISO()}"/>
+              </div>
+            </div>
+            <button class="btn btn-accent" id="ekps-save-entry">${ICONS.collect.replace('navicon','')} Save Entry</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Recent Entries</h3></div>
+          <div class="panel-body" id="ekps-recent-entries">
+            ${recent.length ? recent.map(e=>{
+              const s = students.find(x=>x.id===e.studentId);
+              return `<div class="recent-row">
+                <div><div class="recent-name">${esc(s?s.name:'—')} <span class="id-chip">${e.receiptNo}</span></div>
+                <div class="recent-meta">${esc(e.month)} &middot; ${fmtDate(e.date)}</div></div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div class="recent-amt">${fmt(e.amount)}</div>
+                  <div class="icon-btn" data-del-entry="${e.id}" title="Delete">${ICONS.trash}</div>
+                </div>
+              </div>`;
+            }).join('') : `<div class="empty-state">Koi entry nahi</div>`}
+          </div>
+        </div>
+      </div>`;
+
+    let pickedId = null;
+    const input = document.getElementById('ekps-student-input');
+    const preview = document.getElementById('ekps-pick-preview');
+    input.addEventListener('input', ()=>{
+      const m = input.value.match(/^(\d+)\s*—/);
+      if (m) {
+        const s = students.find(x=>x.id===parseInt(m[1]));
+        if (s) {
+          pickedId = s.id;
+          const due = totalDue(s), paid = totalPaid(s.id), rest = due-paid;
+          preview.className = 'pick-preview show';
+          preview.innerHTML = `<b>${esc(s.name)}</b> &middot; Class ${esc(s.cls)} &middot; Rest Due: <b>${fmt(rest)}</b>`;
+          return;
+        }
+      }
+      pickedId = null;
+      preview.className = 'pick-preview';
+    });
+
+    document.getElementById('ekps-save-entry').addEventListener('click', ()=>{
+      const month = document.getElementById('ekps-month-input').value;
+      const amount = parseFloat(document.getElementById('ekps-amount-input').value);
+      const date = document.getElementById('ekps-date-input').value;
+      if (!pickedId) { toast('Pehle ek valid Student select karein'); input.focus(); return; }
+      if (!month) { toast('Month select karein'); return; }
+      if (!amount || amount<=0) { toast('Sahi Paid Amount daalein'); return; }
+      if (!date) { toast('Payment Date daalein'); return; }
+      const entry = { id: Date.now(), receiptNo: nextReceiptNo(), studentId: pickedId, month, amount, date };
+      entries.push(entry);
+      saveEntries();
+      toast('Entry saved — Ledger updated');
+      renderCollect();
+    });
+
+    contentEl.querySelectorAll('[data-del-entry]').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        if(!confirm('Ye entry delete karein?')) return;
+        entries = entries.filter(e=>e.id !== parseInt(el.dataset.delEntry));
+        saveEntries();
+        toast('Entry deleted');
+        renderCollect();
+      });
+    });
+  }
+
+  /* ---------- SESSION PROMOTION ---------- */
+  function promoteStudents(ids, targetClass, label){
+    const idSet = new Set(ids);
+    const selected = students.filter(s=>idSet.has(s.id));
+    if (!selected.length) { toast('Promote karne ke liye student nahi mila'); return; }
+    if (!targetClass) { toast('Next class available nahi hai'); return; }
+
+    const totalCarry = selected.reduce((a,s)=>a+restDueOf(s),0);
+    const names = selected.length === 1 ? selected[0].name : `${selected.length} students`;
+    const msg = `${names} ko ${targetClass} me promote karein? Pending dues ${fmt(totalCarry)} naye session ke Old Due me carry forward honge. Purani payment entries clear ho jayengi.`;
+    if(!confirm(msg)) return;
+
+    students = students.map(s=>{
+      if(!idSet.has(s.id)) return s;
+      return {
+        ...s,
+        cls: targetClass,
+        oldDue: restDueOf(s),
+        uniformBill: 0,
+        bookBill: 0,
+        otherBill: 0,
+        bills: []
+      };
+    });
+    entries = entries.filter(e=>!idSet.has(e.studentId));
+    saveStudents();
+    saveEntries();
+    toast(`${label || names} promoted to ${targetClass}`);
+    if(route=='promotion') renderPromotion();
+    else renderStudents();
+  }
+
+  function renderPromotion(){
+    const fromClasses = CLASS_ORDER.filter(c=>students.some(s=>s.cls===c && nextClassOf(c)));
+    const firstClass = fromClasses[0] || '';
+    const selectedClass = renderPromotion.selectedClass && fromClasses.includes(renderPromotion.selectedClass) ? renderPromotion.selectedClass : firstClass;
+    renderPromotion.selectedClass = selectedClass;
+    const targetClass = selectedClass ? nextClassOf(selectedClass) : '';
+    const classStudents = selectedClass ? students.filter(s=>s.cls===selectedClass).sort((a,b)=>a.id-b.id) : [];
+    const totalCarry = classStudents.reduce((a,s)=>a+restDueOf(s),0);
+    const paidToClear = classStudents.reduce((a,s)=>a+totalPaid(s.id),0);
+
+    contentEl.innerHTML = `
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-head"><h3>Bulk Class Upgrade</h3></div>
+          <div class="panel-body">
+            <div class="promotion-card">
+              <div class="form-grid">
+                <div class="field">
+                  <label>From Class</label>
+                  <select id="promo-from-cls">
+                    ${fromClasses.length ? fromClasses.map(c=>`<option value="${esc(c)}" ${c===selectedClass?'selected':''}>${esc(c)}</option>`).join('') : '<option value="">No class available</option>'}
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Promote To</label>
+                  <input type="text" value="${targetClass ? esc(targetClass) : 'Last class'}" disabled/>
+                </div>
+              </div>
+              <div class="promotion-summary">
+                <div class="promotion-stat"><div class="k">Students</div><div class="v">${classStudents.length}</div></div>
+                <div class="promotion-stat"><div class="k">Carry Forward</div><div class="v">${fmt(totalCarry)}</div></div>
+                <div class="promotion-stat"><div class="k">Old Payments Clear</div><div class="v">${fmt(paidToClear)}</div></div>
+              </div>
+              <div class="promotion-note">Academic Year 2026-27 end par promote karte hi current pending amount naye session ke Old Due me chala jayega. Purani collection entries aur extra bills clear honge; monthly fee aur exam fee same rahenge.</div>
+              <div style="display:flex; justify-content:flex-end; margin-top:14px;">
+                <span class="btn btn-accent" id="ekps-bulk-promote" ${classStudents.length && targetClass ? '' : 'disabled'}>Promote Full Class</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>One By One Promotion</h3></div>
+          <div class="panel-body" style="padding:0; overflow:auto; max-height:520px;">
+            <table class="data">
+              <thead><tr><th>ID</th><th>Name</th><th>Rest Due</th><th></th></tr></thead>
+              <tbody>
+                ${classStudents.length ? classStudents.map(s=>`<tr>
+                  <td><span class="id-chip">${s.id}</span></td>
+                  <td style="font-weight:600;">${esc(s.name)}</td>
+                  <td class="mono">${fmt(restDueOf(s))}</td>
+                  <td><span class="btn btn-ghost btn-sm" data-promote-one="${s.id}">Promote</span></td>
+                </tr>`).join('') : `<tr><td colspan="4"><div class="empty-state">Koi student nahi mila</div></td></tr>`}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>`;
+
+    const fromSel = document.getElementById('promo-from-cls');
+    if(fromSel){
+      fromSel.addEventListener('change', e=>{ renderPromotion.selectedClass = e.target.value; renderPromotion(); });
+    }
+    const bulkBtn = document.getElementById('ekps-bulk-promote');
+    if(bulkBtn){
+      bulkBtn.addEventListener('click', ()=>{ if(classStudents.length && targetClass) promoteStudents(classStudents.map(s=>s.id), targetClass, `${selectedClass} class`); });
+    }
+    contentEl.querySelectorAll('[data-promote-one]').forEach(el=> el.addEventListener('click', ()=>{
+      const s = students.find(x=>x.id===parseInt(el.dataset.promoteOne));
+      if(s) promoteStudents([s.id], nextClassOf(s.cls), s.name);
+    }));
+  }
+
+  /* ---------- STUDENTS ---------- */
+  function studentModal(){
+    const editing = editingStudentId != null;
+    const s = editing ? students.find(x=>x.id===editingStudentId) : {id:nextStudentId(), cls:CLASS_ORDER[0], name:'', mobNo:'', rollNo:'', section:'', dob:'', photoData:'', monthlyFee:0, examFee:0, oldDue:0, uniformBill:0, bookBill:0, otherBill:0, bills:[]};
+    normalizeStudent(s);
+    modalRoot.innerHTML = `
+      <div class="modal-backdrop" id="ekps-modal-bg">
+        <div class="modal">
+          <div class="modal-head"><h3>${editing?'Edit Student':'Add Student'}</h3>
+            <div class="icon-btn" id="ekps-modal-close">✕</div></div>
+          <div class="modal-body">
+            <div class="form-grid">
+              <div class="field"><label>S.No / ID</label><input type="number" id="f-id" value="${s.id}" ${editing?'disabled':''}/></div>
+              <div class="field"><label>Class</label>
+                <select id="f-cls">${CLASS_ORDER.map(c=>`<option value="${c}" ${c===s.cls?'selected':''}>${c}</option>`).join('')}</select>
+              </div>
+              <div class="field" style="grid-column: span 1;"><label>Student Name</label><input type="text" id="f-name" value="${esc(s.name)}"/></div>
+            </div>
+            <div class="form-grid cols-4">
+              <div class="field">
+                <label>Mobile No.</label>
+                <input type="tel" id="f-mob" value="${esc(s.mobNo||'')}" maxlength="15" placeholder="e.g. 9876543210"/>
+              </div>
+              <div class="field"><label>Roll No.</label><input type="text" id="f-roll" value="${esc(s.rollNo||'')}" placeholder="e.g. 12"/></div>
+              <div class="field"><label>Section</label><input type="text" id="f-section" value="${esc(s.section||'')}" placeholder="e.g. A"/></div>
+              <div class="field"><label>DOB</label><input type="date" id="f-dob" value="${esc(s.dob||'')}"/></div>
+              <div class="field" style="grid-column: span 2;"><label>Photo (optional)</label><input type="file" id="f-photo" accept="image/*"/><div class="hint">Upload karne par photo auto-resize ho jayegi</div></div>
+              <div class="field" style="grid-column: span 2;"><label>Current Photo</label>${s.photoData ? `<img class="photo-thumb" src="${s.photoData}" alt="Student photo"/> <span class="btn btn-ghost btn-sm" id="f-remove-photo">Remove</span>` : '<span class="hint">No photo uploaded</span>'}</div>
+            </div>
+            <div class="form-grid cols-4">
+              <div class="field"><label>Monthly Fee</label><input type="number" id="f-mf" value="${s.monthlyFee}"/></div>
+              <div class="field"><label>Exam Fee</label><input type="number" id="f-ef" value="${s.examFee}"/></div>
+              <div class="field"><label>Old Due</label><input type="number" id="f-od" value="${s.oldDue}"/></div>
+              <div class="field"><label>Uniform Bill</label><input type="number" id="f-ub" value="${s.uniformBill}"/></div>
+              <div class="field"><label>Book Bill</label><input type="number" id="f-bb" value="${s.bookBill}"/></div>
+              <div class="field"><label>Other Bill</label><input type="number" id="f-ob" value="${s.otherBill}"/></div>
+            </div>
+          </div>
+          <div class="modal-foot">
+            <span class="btn btn-ghost" id="ekps-modal-cancel">Cancel</span>
+            <span class="btn btn-primary" id="ekps-modal-save">${editing?'Save Changes':'Add Student'}</span>
+          </div>
+        </div>
+      </div>`;
+    const close = ()=>{ modalRoot.innerHTML=''; editingStudentId=null; };
+    document.getElementById('ekps-modal-bg').addEventListener('click', e=>{ if(e.target.id==='ekps-modal-bg') close(); });
+    document.getElementById('ekps-modal-close').addEventListener('click', close);
+    document.getElementById('ekps-modal-cancel').addEventListener('click', close);
+    const removePhotoBtn = document.getElementById('f-remove-photo');
+    if(removePhotoBtn) removePhotoBtn.addEventListener('click', ()=>{ s.photoData=''; studentModal(); });
+    document.getElementById('ekps-modal-save').addEventListener('click', async ()=>{
+      const name = document.getElementById('f-name').value.trim();
+      if (!name) { toast('Student Name daalein'); return; }
+      const mobNo = document.getElementById('f-mob').value.trim();
+      if (mobNo && !/^[0-9+\-\s]{7,15}$/.test(mobNo)) { toast('Sahi Mobile No. daalein'); return; }
+      let photoData = s.photoData || '';
+      const photoInput = document.getElementById('f-photo');
+      if(photoInput && photoInput.files && photoInput.files[0]){
+        try { photoData = await readResizedImage(photoInput.files[0], 260); }
+        catch(err){ toast('Photo upload nahi ho payi'); return; }
+      }
+      const rec = {
+        id: editing ? s.id : parseInt(document.getElementById('f-id').value) || nextStudentId(),
+        cls: document.getElementById('f-cls').value,
+        name,
+        mobNo,
+        rollNo: document.getElementById('f-roll').value.trim(),
+        section: document.getElementById('f-section').value.trim(),
+        dob: document.getElementById('f-dob').value,
+        photoData,
+        monthlyFee: parseFloat(document.getElementById('f-mf').value)||0,
+        examFee: parseFloat(document.getElementById('f-ef').value)||0,
+        oldDue: parseFloat(document.getElementById('f-od').value)||0,
+        uniformBill: parseFloat(document.getElementById('f-ub').value)||0,
+        bookBill: parseFloat(document.getElementById('f-bb').value)||0,
+        otherBill: parseFloat(document.getElementById('f-ob').value)||0,
+        bills: s.bills || [],
+      };
+      if (editing) {
+        students = students.map(x=>x.id===rec.id?rec:x);
+      } else {
+        if (students.some(x=>x.id===rec.id)) { toast('Ye ID pehle se maujood hai'); return; }
+        students.push(rec);
+      }
+      saveStudents();
+      toast(editing?'Student updated':'Student added');
+      close();
+      renderStudents();
+    });
+  }
+
+  /* ---------- ADD BILL ---------- */
+  function billModal(studentId){
+    const s = students.find(x=>x.id===studentId);
+    if (!s) return;
+    if (!Array.isArray(s.bills)) s.bills = [];
+
+    function draw(){
+      const bills = s.bills.slice().sort((a,b)=> b.id-a.id);
+      modalRoot.innerHTML = `
+        <div class="modal-backdrop" id="ekps-bill-bg">
+          <div class="modal">
+            <div class="modal-head">
+              <h3>Add Bill &mdash; ${esc(s.name)} <span class="cls-chip">${esc(s.cls)}</span></h3>
+              <div class="icon-btn" id="ekps-bill-close">✕</div>
+            </div>
+            <div class="modal-body">
+              <div class="form-grid cols-4">
+                <div class="field" style="grid-column: span 2;">
+                  <label>Bill Type</label>
+                  <select id="bl-type">
+                    ${BILL_TYPES.map(t=>`<option value="${t}">${t}</option>`).join('')}
+                  </select>
+                </div>
+                <div class="field" style="grid-column: span 2;" id="bl-custom-wrap">
+                  <label>Custom Bill Name</label>
+                  <input type="text" id="bl-custom" placeholder="e.g. Sports Kit"/>
+                </div>
+                <div class="field"><label>Amount (₹)</label><input type="number" id="bl-amount" min="1" placeholder="e.g. 500"/></div>
+                <div class="field"><label>Date</label><input type="date" id="bl-date" value="${todayISO()}"/></div>
+                <div class="field" style="grid-column: span 2;"><label>Note (optional)</label><input type="text" id="bl-note" placeholder="e.g. Class 3 sports day"/></div>
+              </div>
+              <span class="btn btn-accent" id="ekps-bill-add">+ Add This Bill</span>
+
+              <div style="margin-top:18px; border-top:1px solid var(--border); padding-top:12px;">
+                <div style="font-size:11.5px; font-weight:700; color:var(--slate); text-transform:uppercase; letter-spacing:.04em; margin-bottom:8px;">Bill History (${bills.length})</div>
+                ${bills.length ? bills.map(b=>`
+                  <div class="recent-row">
+                    <div><div class="recent-name">${fmtDate(b.date)}${b.note? ' &middot; ' + esc(b.note) : ''}</div></div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                      <div class="recent-amt" style="color:var(--ink);">${fmt(b.amount)}</div>
+                      <div class="icon-btn" data-bill-del="${b.id}" title="Delete">${ICONS.trash}</div>
+                    </div>
+                  </div>`).join('') : `<div class="empty-state" style="padding:14px;">Abhi tak koi extra bill nahi jode gaye</div>`}
+              </div>
+            </div>
+            <div class="modal-foot">
+              <span class="btn btn-ghost" id="ekps-bill-done">Done</span>
+            </div>
+          </div>
+        </div>`;
+
+      const close = ()=>{ modalRoot.innerHTML=''; };
+      document.getElementById('ekps-bill-bg').addEventListener('click', e=>{ if(e.target.id==='ekps-bill-bg') close(); });
+      document.getElementById('ekps-bill-close').addEventListener('click', close);
+      document.getElementById('ekps-bill-done').addEventListener('click', ()=>{ close(); renderStudents(); });
+
+      const typeSel = document.getElementById('bl-type');
+      const customWrap = document.getElementById('bl-custom-wrap');
+      const syncCustom = ()=>{ customWrap.style.display = typeSel.value==='Other' ? '' : 'none'; };
+      typeSel.addEventListener('change', syncCustom);
+      syncCustom();
+
+      document.getElementById('ekps-bill-add').addEventListener('click', ()=>{
+        const type = typeSel.value==='Other' ? (document.getElementById('bl-custom').value.trim() || 'Other') : typeSel.value;
+        const amount = parseFloat(document.getElementById('bl-amount').value);
+        const date = document.getElementById('bl-date').value;
+        const note = document.getElementById('bl-note').value.trim();
+        if (!amount || amount<=0) { toast('Sahi Bill Amount daalein'); return; }
+        if (!date) { toast('Date daalein'); return; }
+        s.bills.push({ id: Date.now(), type, amount, date, note });
+        saveStudents();
+        toast('Bill added — ' + s.name);
+        draw();
+      });
+
+      modalRoot.querySelectorAll('[data-bill-del]').forEach(el=>{
+        el.addEventListener('click', ()=>{
+          if(!confirm('Ye bill hatana hai?')) return;
+          const id = parseInt(el.dataset.billDel);
+          s.bills = s.bills.filter(b=>b.id!==id);
+          saveStudents();
+          toast('Bill removed');
+          draw();
+        });
+      });
+    }
+    draw();
+  }
+
+  function renderStudents(){
+    const q = studentQ.trim().toLowerCase();
+    const list = students.filter(s => !q || s.name.toLowerCase().includes(q) || String(s.id).includes(q) || s.cls.toLowerCase().includes(q) || (s.mobNo||'').includes(q))
+      .sort((a,b)=> CLASS_ORDER.indexOf(a.cls)-CLASS_ORDER.indexOf(b.cls) || a.id-b.id);
+
+    contentEl.innerHTML = `
+      <div class="toolbar">
+        <div class="search-wrap">${ICONS.search}<input type="text" id="ekps-student-search" placeholder="Naam, ID, class ya mobile no se search karein" value="${esc(studentQ)}"/></div>
+        <span style="flex:1"></span>
+        <span class="btn btn-ghost" id="ekps-open-promotion">Session Promotion</span>
+        <span class="btn btn-accent" id="ekps-add-student">+ Add Student</span>
+      </div>
+      <div class="panel">
+        <div class="panel-body" style="padding:0; overflow:auto;">
+          <table class="data">
+            <thead><tr><th>ID</th><th>Class</th><th>Name</th><th>Mobile No.</th><th>Monthly Fee</th><th>Total Due</th><th>Paid</th><th>Rest Due</th><th>Status</th><th>Promote</th><th></th></tr></thead>
+            <tbody>
+              ${list.length ? list.map(s=>{
+                const due = totalDue(s), paid = totalPaid(s.id), rest = due-paid, st = statusOf(s);
+                return `<tr>
+                  <td><span class="id-chip">${s.id}</span></td>
+                  <td><span class="cls-chip">${esc(s.cls)}</span></td>
+                  <td style="font-weight:600;">${esc(s.name)}</td>
+                  <td class="mono">${s.mobNo ? esc(s.mobNo) : '<span style="color:var(--slate);">—</span>'}</td>
+                  <td class="mono">${fmt(s.monthlyFee)}</td>
+                  <td class="mono">${fmt(due)}</td>
+                  <td class="mono">${fmt(paid)}</td>
+                  <td class="mono">${fmt(rest)}</td>
+                  <td><span class="status-badge status-${st}">${st}</span></td>
+                  <td>${nextClassOf(s.cls) ? `<span class="btn btn-ghost btn-sm" data-promote-student="${s.id}">Promote</span>` : '<span style="color:var(--slate);">Last</span>'}</td>
+                  <td><div class="row-actions">
+                    <div class="icon-btn" data-bill="${s.id}" title="Add Bill">${ICONS.bill}</div>
+                    <div class="icon-btn" data-edit="${s.id}" title="Edit">${ICONS.edit}</div>
+                    <div class="icon-btn" data-del="${s.id}" title="Delete">${ICONS.trash}</div>
+                  </div></td>
+                </tr>`;
+              }).join('') : `<tr><td colspan="11"><div class="empty-state">Koi student nahi mila</div></td></tr>`}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+
+    document.getElementById('ekps-student-search').addEventListener('input', (e)=>{ studentQ = e.target.value; renderStudents(); });
+    document.getElementById('ekps-open-promotion').addEventListener('click', ()=>{ route='promotion'; render(); });
+    document.getElementById('ekps-add-student').addEventListener('click', ()=>{ editingStudentId=null; studentModal(); });
+    contentEl.querySelectorAll('[data-promote-student]').forEach(el=> el.addEventListener('click', ()=>{
+      const s = students.find(x=>x.id===parseInt(el.dataset.promoteStudent));
+      if(s) promoteStudents([s.id], nextClassOf(s.cls), s.name);
+    }));
+    contentEl.querySelectorAll('[data-edit]').forEach(el=> el.addEventListener('click', ()=>{ editingStudentId = parseInt(el.dataset.edit); studentModal(); }));
+    contentEl.querySelectorAll('[data-bill]').forEach(el=> el.addEventListener('click', ()=>{ billModal(parseInt(el.dataset.bill)); }));
+    contentEl.querySelectorAll('[data-del]').forEach(el=> el.addEventListener('click', ()=>{
+      if(!confirm('Ye student delete karein? Iski saari payment entries bhi hat jayengi.')) return;
+      const id = parseInt(el.dataset.del);
+      students = students.filter(s=>s.id!==id);
+      entries = entries.filter(e=>e.studentId!==id);
+      saveStudents(); saveEntries();
+      toast('Student deleted');
+      renderStudents();
+    }));
+  }
+
+  function chunkArr(arr, n){ const out=[]; for(let i=0;i<arr.length;i+=n) out.push(arr.slice(i,i+n)); return out; }
+
+  function downloadDemandBillsPDF(){
+    const list = students.filter(s => (totalDue(s) - totalPaid(s.id)) > 0)
+      .sort((a,b)=> CLASS_ORDER.indexOf(a.cls)-CLASS_ORDER.indexOf(b.cls) || a.id-b.id);
+    if (!list.length) { toast('Koi bhi student due nahi hai'); return; }
+
+    const classes = CLASS_ORDER.filter(c => list.some(s=>s.cls===c));
+    let sheetsHtml = '';
+    classes.forEach(cls=>{
+      const clsStudents = list.filter(s=>s.cls===cls);
+      const pages = chunkArr(clsStudents, 8);
+      pages.forEach((page, pi)=>{
+        const slips = page.map(s=>{
+          const due = totalDue(s), paid = totalPaid(s.id), rest = due-paid;
+          return `<div class="slip">
+            <div class="slip-head">${schoolSettings.schoolName}</div>
+            <div class="slip-sub">Fee Demand Notice &middot; ${fmtDate(todayISO())}</div>
+            <div class="slip-row"><span>Student ID</span><span>${s.id}</span></div>
+            <div class="slip-row"><span>Name</span><span>${esc(s.name)}</span></div>
+            <div class="slip-row"><span>Class</span><span>${esc(s.cls)}</span></div>
+            <div class="slip-row"><span>Total Due</span><span>${fmt(due)}</span></div>
+            <div class="slip-row"><span>Total Paid</span><span>${fmt(paid)}</span></div>
+            <div class="slip-row rest"><span>Amount Payable</span><span>${fmt(rest)}</span></div>
+            <div class="slip-foot">Kripya jald se jald fee jama karein &middot; Accounts Office</div>
+          </div>`;
+        }).join('');
+        sheetsHtml += `<div class="sheet">
+          <div class="sheet-title">Class: ${esc(cls)} &mdash; Page ${pi+1} of ${pages.length}</div>
+          <div class="grid">${slips}</div>
+        </div>`;
+      });
+    });
+
+    const win = window.open('', '_blank');
+    if (!win) { toast('Popup block ho gaya — popup allow karein'); return; }
+    win.document.write(`<!DOCTYPE html><html><head><title>Fee Demand Bills</title><style>
+      @page { size: A4; margin: 10mm; }
+      * { box-sizing:border-box; }
+      body { margin:0; font-family: Arial, Helvetica, sans-serif; color:#1B2A4A; }
+      .sheet { page-break-after: always; }
+      .sheet:last-child { page-break-after: auto; }
+      .sheet-title { font-size:13px; font-weight:700; margin-bottom:8px; text-align:center; }
+      .grid { display:grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap:5mm; height: 267mm; }
+      .slip { border:1.5px dashed #99a; border-radius:4px; padding:9px 11px; font-size:11px; display:flex; flex-direction:column; }
+      .slip-head { font-weight:800; font-size:12.5px; }
+      .slip-sub { font-size:9px; color:#555; margin-bottom:5px; border-bottom:1px solid #ccc; padding-bottom:5px; }
+      .slip-row { display:flex; justify-content:space-between; padding:2px 0; font-size:11px; }
+      .slip-row.rest { font-weight:800; border-top:1px dashed #99a; margin-top:5px; padding-top:5px; font-size:12.5px; color:#C1502E; }
+      .slip-foot { margin-top:auto; font-size:8.5px; color:#666; padding-top:6px; border-top:1px dashed #ccc; }
+    </style></head><body>${sheetsHtml}</body></html>`);
+    win.document.close();
+    win.focus();
+    setTimeout(()=> win.print(), 300);
+  }
+
+  function exportExcel(){
+    if (typeof XLSX === 'undefined') { toast('Excel library load nahi hui — internet check karein'); return; }
+    const list = students.slice().sort((a,b)=> CLASS_ORDER.indexOf(a.cls)-CLASS_ORDER.indexOf(b.cls) || a.id-b.id);
+    const rows = list.map(s=>{
+      const due = totalDue(s), paid = totalPaid(s.id), rest = due-paid, st = statusOf(s);
+      const row = {
+        'ID': s.id,
+        'Class': s.cls,
+        'Name': s.name,
+        'Mobile No': s.mobNo || '',
+        'Monthly Fee': s.monthlyFee,
+        'Total Due': due,
+        'Total Paid': paid,
+        'Rest Due': rest,
+        'Status': st,
+      };
+      MONTHS.forEach(m => { row[m] = monthPaid(s.id, m); });
+      return row;
+    });
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws['!cols'] = [{wch:6},{wch:8},{wch:26},{wch:12},{wch:12},{wch:12},{wch:12},{wch:10}].concat(MONTHS.map(()=>({wch:9})));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Fee Ledger');
+    XLSX.writeFile(wb, `Fee_Ledger_${todayISO()}.xlsx`);
+    toast('Excel file download ho rahi hai');
+  }
+
+  /* ---------- LEDGER ---------- */
+  function renderLedger(){
+    const classes = ['all', ...CLASS_ORDER.filter(c=>students.some(s=>s.cls===c))];
+    let list = students.filter(s=>{
+      if (ledgerFilters.cls!=='all' && s.cls!==ledgerFilters.cls) return false;
+      const st = statusOf(s);
+      if (ledgerFilters.status!=='all' && st!==ledgerFilters.status) return false;
+      if (ledgerFilters.q && !s.name.toLowerCase().includes(ledgerFilters.q.toLowerCase()) && !String(s.id).includes(ledgerFilters.q)) return false;
+      return true;
+    }).sort((a,b)=> CLASS_ORDER.indexOf(a.cls)-CLASS_ORDER.indexOf(b.cls) || a.id-b.id);
+
+    contentEl.innerHTML = `
+      <div class="toolbar">
+        <div class="search-wrap">${ICONS.search}<input type="text" id="ekps-ledger-search" placeholder="Student naam/ID search karein" value="${esc(ledgerFilters.q)}"/></div>
+        <select id="ekps-ledger-cls">${classes.map(c=>`<option value="${c}" ${c===ledgerFilters.cls?'selected':''}>${c==='all'?'All Classes':c}</option>`).join('')}</select>
+        <select id="ekps-ledger-status">
+          ${['all','Paid','Partial','Due'].map(s=>`<option value="${s}" ${s===ledgerFilters.status?'selected':''}>${s==='all'?'All Status':s}</option>`).join('')}
+        </select>
+        <span style="flex:1"></span>
+        <span class="btn btn-ghost" id="ekps-demand-pdf">🧾 Demand Bills PDF (Class-wise, A4)</span>
+        <span class="btn btn-accent" id="ekps-export-excel">⬇ Export Excel (Month-wise)</span>
+      </div>
+      <div class="panel">
+        <div class="panel-body" style="padding:0; overflow:auto;">
+          <table class="data">
+            <thead><tr><th></th><th>ID</th><th>Class</th><th>Name</th><th>Total Due</th><th>Total Paid</th><th>Rest Due</th><th>Status</th></tr></thead>
+            <tbody>
+              ${list.length ? list.map(s=>{
+                const due = totalDue(s), paid = totalPaid(s.id), rest = due-paid, st = statusOf(s);
+                const expanded = !!ledgerExpanded[s.id];
+                const months = MONTHS.map(m=>{
+                  const v = monthPaid(s.id, m);
+                  return `<div class="month-cell ${v>0?'paid':''}"><div class="m">${m.slice(0,3)}</div><div class="v">${v>0?fmt(v):'—'}</div></div>`;
+                }).join('');
+                return `<tr data-toggle="${s.id}" style="cursor:pointer;">
+                  <td><span class="icon-btn" style="transform:rotate(${expanded?90:0}deg);">${ICONS.chevron}</span></td>
+                  <td><span class="id-chip">${s.id}</span></td>
+                  <td><span class="cls-chip">${esc(s.cls)}</span></td>
+                  <td style="font-weight:600;">${esc(s.name)}</td>
+                  <td class="mono">${fmt(due)}</td>
+                  <td class="mono">${fmt(paid)}</td>
+                  <td class="mono">${fmt(rest)}</td>
+                  <td><span class="status-badge status-${st}">${st}</span></td>
+                </tr>
+                ${expanded?`<tr class="detail-row"><td colspan="8"><div class="month-grid">${months}</div></td></tr>`:''}
+                `;
+              }).join('') : `<tr><td colspan="8"><div class="empty-state">Koi record nahi mila</div></td></tr>`}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+
+    document.getElementById('ekps-ledger-search').addEventListener('input', e=>{ ledgerFilters.q = e.target.value; renderLedger(); });
+    document.getElementById('ekps-ledger-cls').addEventListener('change', e=>{ ledgerFilters.cls = e.target.value; renderLedger(); });
+    document.getElementById('ekps-ledger-status').addEventListener('change', e=>{ ledgerFilters.status = e.target.value; renderLedger(); });
+    document.getElementById('ekps-export-excel').addEventListener('click', exportExcel);
+    document.getElementById('ekps-demand-pdf').addEventListener('click', downloadDemandBillsPDF);
+    contentEl.querySelectorAll('[data-toggle]').forEach(el=> el.addEventListener('click', ()=>{
+      const id = parseInt(el.dataset.toggle);
+      ledgerExpanded[id] = !ledgerExpanded[id];
+      renderLedger();
+    }));
+  }
+
+  /* ---------- ADMIT CARD ---------- */
+  function selectedAdmitStudents(){ return students.filter(s=>admitSelected[s.id]); }
+  function admitPreviewCard(s, exam){
+    const logo = schoolSettings.logoData ? `<img class="admit-preview-logo" src="${schoolSettings.logoData}"/>` : `<div class="admit-preview-logo"></div>`;
+    const photo = s.photoData ? `<img class="admit-preview-photo" src="${s.photoData}"/>` : `<div class="admit-preview-photo"></div>`;
+    return `<div class="admit-preview-card">
+      <div class="admit-preview-head">${logo}<div><div class="admit-preview-school">${esc(schoolSettings.schoolName)}</div><div style="text-align:center; font-size:10px; color:var(--slate);">${esc(schoolSettings.address || '')}</div></div>${photo}</div>
+      <div class="admit-preview-tag">ADMIT CARD</div>
+      <div style="text-align:center; font-size:12px; font-weight:700; margin-bottom:8px;">${esc(exam ? exam.name : 'Exam / Class Test')}</div>
+      <div class="admit-preview-details">
+        <div><span>Name</span><b>${esc(s.name)}</b></div><div><span>ID</span><b>${s.id}</b></div>
+        <div><span>Class</span><b>${esc(s.cls)}${s.section ? ' - ' + esc(s.section) : ''}</b></div><div><span>Roll No.</span><b>${esc(s.rollNo || '-')}</b></div>
+        <div><span>DOB</span><b>${s.dob ? fmtDate(s.dob) : '-'}</b></div><div><span>Dates</span><b>${exam ? fmtDate(exam.fromDate) + ' to ' + fmtDate(exam.toDate) : '-'}</b></div>
+      </div>
+    </div>`;
+  }
+  function admitStudentCard(s, exam){
+    const logo = schoolSettings.logoData ? `<img class="admit-logo" src="${schoolSettings.logoData}"/>` : `<div class="admit-logo"></div>`;
+    const photo = s.photoData ? `<img class="admit-photo" src="${s.photoData}"/>` : `<div class="admit-photo"></div>`;
+    const sign = schoolSettings.signatureData ? `<img class="sign-img" src="${schoolSettings.signatureData}"/>` : '';
+    return `<div class="admit-card">
+      <div class="admit-head">${logo}<div><div class="admit-school">${esc(schoolSettings.schoolName)}</div><div class="admit-sub">${esc(schoolSettings.address || '')}${schoolSettings.phone ? ' | Ph: ' + esc(schoolSettings.phone) : ''}</div></div>${photo}</div>
+      <div class="admit-tag">ADMIT CARD</div>
+      <div class="admit-exam">${esc(exam ? exam.name : 'Exam / Class Test')} ${exam ? `(${fmtDate(exam.fromDate)} - ${fmtDate(exam.toDate)})` : ''}</div>
+      <div class="admit-grid">
+        <div class="admit-field"><span>Student Name</span><b>${esc(s.name)}</b></div>
+        <div class="admit-field"><span>Student ID</span><b>${s.id}</b></div>
+        <div class="admit-field"><span>Class</span><b>${esc(s.cls)}${s.section ? ' - ' + esc(s.section) : ''}</b></div>
+        <div class="admit-field"><span>Roll No.</span><b>${esc(s.rollNo || '-')}</b></div>
+        <div class="admit-field"><span>DOB</span><b>${s.dob ? fmtDate(s.dob) : '-'}</b></div>
+        <div class="admit-field"><span>Exam Dates</span><b>${exam ? `${fmtDate(exam.fromDate)} to ${fmtDate(exam.toDate)}` : '-'}</b></div>
+      </div>
+      <div class="admit-instructions">${esc(schoolSettings.instructions || '')}</div>
+      <div class="admit-foot"><div class="stamp-box">School Stamp</div><div>${sign}<div class="sign-line">${esc(schoolSettings.principalName || 'Principal')}</div></div></div>
+    </div>`;
+  }
+  function admitPrintPages(list, exam){
+    const pages = chunkArr(list, 4);
+    return pages.map(page=>`<div class="admit-page">${page.map(s=>admitStudentCard(s, exam)).join('')}${Array.from({length:4-page.length}).map(()=>'<div></div>').join('')}</div>`).join('');
+  }
+  function renderAdmitCards(){
+    const classes = ['all', ...CLASS_ORDER.filter(c=>students.some(s=>s.cls===c))];
+    if(!admitFilters.examId && exams.length) admitFilters.examId = String(exams[0].id);
+    const exam = exams.find(e=>String(e.id)===String(admitFilters.examId));
+    const q = admitFilters.q.trim().toLowerCase();
+    const visible = students.filter(s=>{
+      if(admitFilters.cls !== 'all' && s.cls !== admitFilters.cls) return false;
+      if(q && !s.name.toLowerCase().includes(q) && !String(s.id).includes(q) && !(s.rollNo||'').toLowerCase().includes(q)) return false;
+      return true;
+    }).sort((a,b)=> CLASS_ORDER.indexOf(a.cls)-CLASS_ORDER.indexOf(b.cls) || (a.rollNo||'').localeCompare(b.rollNo||'', undefined, {numeric:true}) || a.id-b.id);
+    const selected = selectedAdmitStudents();
+
+    contentEl.innerHTML = `
+      <div class="admit-settings-grid">
+        <div class="panel">
+          <div class="panel-head"><h3>School Settings</h3></div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="field"><label>School Name</label><input type="text" id="set-school" value="${esc(schoolSettings.schoolName)}"/></div>
+              <div class="field"><label>Phone</label><input type="text" id="set-phone" value="${esc(schoolSettings.phone)}"/></div>
+              <div class="field" style="grid-column:span 2;"><label>Address</label><input type="text" id="set-address" value="${esc(schoolSettings.address)}"/></div>
+              <div class="field"><label>Principal Name</label><input type="text" id="set-principal" value="${esc(schoolSettings.principalName)}"/></div>
+              <div class="field"><label>Logo</label><input type="file" id="set-logo" accept="image/*"/>${schoolSettings.logoData ? '<div class="hint">Logo uploaded</div>' : ''}</div>
+              <div class="field"><label>Principal Signature</label><input type="file" id="set-sign" accept="image/*"/>${schoolSettings.signatureData ? '<div class="hint">Signature uploaded</div>' : ''}</div>
+              <div class="field" style="grid-column:span 2;"><label>Instructions</label><textarea id="set-instructions">${esc(schoolSettings.instructions)}</textarea></div>
+            </div>
+            <span class="btn btn-primary" id="save-school-settings">Save School Settings</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Exam Manager</h3></div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="field" style="grid-column:span 2;"><label>Exam / Test Name</label><input type="text" id="exam-name" value="${esc(admitEditingExamId ? (exams.find(e=>e.id===admitEditingExamId)||{}).name||'' : '')}" placeholder="e.g. Half Yearly Exam"/></div>
+              <div class="field"><label>From Date</label><input type="date" id="exam-from" value="${esc(admitEditingExamId ? (exams.find(e=>e.id===admitEditingExamId)||{}).fromDate||'' : '')}"/></div>
+              <div class="field"><label>To Date</label><input type="date" id="exam-to" value="${esc(admitEditingExamId ? (exams.find(e=>e.id===admitEditingExamId)||{}).toDate||'' : '')}"/></div>
+            </div>
+            <div style="display:flex; gap:8px; margin-bottom:12px;"><span class="btn btn-accent" id="save-exam">${admitEditingExamId?'Update Exam':'Add Exam'}</span>${admitEditingExamId?'<span class="btn btn-ghost" id="cancel-exam-edit">Cancel</span>':''}</div>
+            ${exams.length ? exams.map(e=>`<div class="recent-row"><div><div class="recent-name">${esc(e.name)}</div><div class="recent-meta">${fmtDate(e.fromDate)} to ${fmtDate(e.toDate)}</div></div><div class="row-actions"><span class="btn btn-ghost btn-sm" data-edit-exam="${e.id}">Edit</span><span class="btn btn-ghost btn-sm" data-del-exam="${e.id}">Delete</span></div></div>`).join('') : '<div class="empty-state" style="padding:18px;">Pehle exam add karein</div>'}
+          </div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:16px;">
+        <div class="panel-head"><h3>Student Selection</h3><span class="btn btn-primary btn-sm" id="print-selected-admit" ${selected.length && exam ? '' : 'disabled'}>${ICONS.print} Print Selected</span></div>
+        <div class="panel-body">
+          <div class="toolbar">
+            <select id="admit-exam-select">${exams.length ? exams.map(e=>`<option value="${e.id}" ${String(e.id)===String(admitFilters.examId)?'selected':''}>${esc(e.name)}</option>`).join('') : '<option value="">No exam</option>'}</select>
+            <select id="admit-class-select">${classes.map(c=>`<option value="${c}" ${c===admitFilters.cls?'selected':''}>${c==='all'?'All Classes':c}</option>`).join('')}</select>
+            <div class="search-wrap">${ICONS.search}<input type="text" id="admit-search" value="${esc(admitFilters.q)}" placeholder="Name, ID, Roll No search"/></div>
+            <span class="btn btn-ghost" id="select-visible">Select All Visible</span>
+            <span class="btn btn-ghost" id="clear-selection">Clear</span>
+            <span class="btn btn-accent" id="print-class-admit" ${visible.length && exam ? '' : 'disabled'}>Print Whole Class</span>
+          </div>
+          <div style="overflow:auto; max-height:380px;"><table class="data"><thead><tr><th></th><th>ID</th><th>Photo</th><th>Class</th><th>Roll</th><th>Name</th><th>DOB</th></tr></thead><tbody>
+            ${visible.length ? visible.map(s=>`<tr><td><input type="checkbox" data-admit-check="${s.id}" ${admitSelected[s.id]?'checked':''}/></td><td><span class="id-chip">${s.id}</span></td><td>${s.photoData?`<img class="photo-thumb" src="${s.photoData}"/>`:'-'}</td><td><span class="cls-chip">${esc(s.cls)}${s.section?' '+esc(s.section):''}</span></td><td>${esc(s.rollNo||'-')}</td><td style="font-weight:600;">${esc(s.name)}</td><td>${s.dob?fmtDate(s.dob):'-'}</td></tr>`).join('') : '<tr><td colspan="7"><div class="empty-state">Koi student nahi mila</div></td></tr>'}
+          </tbody></table></div>
+          <div class="admit-selected-list">${selected.length ? selected.slice(0,24).map(s=>`<span class="admit-pill">${esc(s.name)} (${esc(s.cls)})</span>`).join('') + (selected.length>24?`<span class="admit-pill">+${selected.length-24} more</span>`:'') : '<span class="hint">No student selected</span>'}</div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:16px;">
+        <div class="panel-head"><h3>Live Preview</h3><span class="hint">${selected.length} selected &middot; print me A4 par 4 cards per page</span></div>
+        <div class="panel-body">
+          ${selected.length ? `<div class="admit-preview-grid">${selected.slice(0,4).map(s=>admitPreviewCard(s, exam)).join('')}</div>${selected.length>4?`<div class="hint" style="margin-top:10px;">Aur ${selected.length-4} admit cards print me include honge.</div>`:''}` : '<div class="empty-state" style="padding:22px;">Preview ke liye student select karein</div>'}
+        </div>
+      </div>
+      <div id="ekps-admit-print">${selected.length && exam ? admitPrintPages(selected, exam) : ''}</div>`;
+
+    document.getElementById('save-school-settings').addEventListener('click', async ()=>{
+      schoolSettings.schoolName = document.getElementById('set-school').value.trim() || 'Education Key Public School';
+      schoolSettings.address = document.getElementById('set-address').value.trim();
+      schoolSettings.phone = document.getElementById('set-phone').value.trim();
+      schoolSettings.principalName = document.getElementById('set-principal').value.trim() || 'Principal';
+      schoolSettings.instructions = document.getElementById('set-instructions').value.trim();
+      const logo = document.getElementById('set-logo').files[0];
+      const sign = document.getElementById('set-sign').files[0];
+      try {
+        if(logo) schoolSettings.logoData = await readResizedImage(logo, 260);
+        if(sign) schoolSettings.signatureData = await readResizedImage(sign, 360);
+      } catch(err){ toast('Image upload nahi ho payi'); return; }
+      saveSettings(); toast('School settings saved'); renderAdmitCards();
+    });
+    document.getElementById('save-exam').addEventListener('click', ()=>{
+      const name = document.getElementById('exam-name').value.trim();
+      const fromDate = document.getElementById('exam-from').value;
+      const toDate = document.getElementById('exam-to').value;
+      if(!name || !fromDate || !toDate){ toast('Exam name aur date daalein'); return; }
+      if(admitEditingExamId){ exams = exams.map(e=>e.id===admitEditingExamId ? {...e, name, fromDate, toDate} : e); admitEditingExamId = null; }
+      else { const rec = {id:nextExamId(), name, fromDate, toDate}; exams.push(rec); admitFilters.examId = String(rec.id); }
+      saveExams(); toast('Exam saved'); renderAdmitCards();
+    });
+    const cancelExam = document.getElementById('cancel-exam-edit');
+    if(cancelExam) cancelExam.addEventListener('click', ()=>{ admitEditingExamId=null; renderAdmitCards(); });
+    contentEl.querySelectorAll('[data-edit-exam]').forEach(el=>el.addEventListener('click', ()=>{ admitEditingExamId=parseInt(el.dataset.editExam); renderAdmitCards(); }));
+    contentEl.querySelectorAll('[data-del-exam]').forEach(el=>el.addEventListener('click', ()=>{ if(!confirm('Ye exam delete karein?')) return; const id=parseInt(el.dataset.delExam); exams=exams.filter(e=>e.id!==id); if(String(admitFilters.examId)===String(id)) admitFilters.examId=''; saveExams(); toast('Exam deleted'); renderAdmitCards(); }));
+    document.getElementById('admit-exam-select').addEventListener('change', e=>{ admitFilters.examId=e.target.value; renderAdmitCards(); });
+    document.getElementById('admit-class-select').addEventListener('change', e=>{ admitFilters.cls=e.target.value; renderAdmitCards(); });
+    document.getElementById('admit-search').addEventListener('input', e=>{ admitFilters.q=e.target.value; renderAdmitCards(); });
+    document.getElementById('select-visible').addEventListener('click', ()=>{ visible.forEach(s=>admitSelected[s.id]=true); renderAdmitCards(); });
+    document.getElementById('clear-selection').addEventListener('click', ()=>{ admitSelected={}; renderAdmitCards(); });
+    document.getElementById('print-class-admit').addEventListener('click', ()=>{ if(!exam || !visible.length) return; admitSelected={}; visible.forEach(s=>admitSelected[s.id]=true); renderAdmitCards(); setTimeout(()=>window.print(), 80); });
+    document.getElementById('print-selected-admit').addEventListener('click', ()=>{ if(selected.length && exam) window.print(); });
+    contentEl.querySelectorAll('[data-admit-check]').forEach(el=>el.addEventListener('change', ()=>{ const id=parseInt(el.dataset.admitCheck); if(el.checked) admitSelected[id]=true; else delete admitSelected[id]; renderAdmitCards(); }));
+  }
+
+  /* ---------- RECEIPTS ---------- */
+  function receiptBodyHTML(sel, s, netRest){
+    return `
+      <div class="receipt-top">
+        <div>
+          <div class="receipt-school">Education Key<br/>Public School</div>
+          <div class="receipt-school-sub">Fees Payment Receipt</div>
+        </div>
+        <div class="receipt-no">${sel.receiptNo}</div>
+      </div>
+      <div class="receipt-row"><span class="k">Student Name</span><span class="v">${esc(s.name)}</span></div>
+      <div class="receipt-row"><span class="k">Class</span><span class="v">${esc(s.cls)}</span></div>
+      <div class="receipt-row"><span class="k">Paid For Month</span><span class="v">${esc(sel.month)}</span></div>
+      <div class="receipt-row"><span class="k">Payment Date</span><span class="v">${fmtDate(sel.date)}</span></div>
+      <div class="receipt-amt-block">
+        <div class="receipt-amt-label">Amount Received</div>
+        <div class="receipt-amt">${fmt(sel.amount)}</div>
+      </div>
+      <div class="receipt-row"><span class="k">Net Outstanding Due</span><span class="v">${fmt(netRest)}</span></div>
+      <div class="receipt-foot">
+        <span>Issued: ${fmtDate(todayISO())}</span>
+        <span class="receipt-sign">Principal / Accounts</span>
+      </div>`;
+  }
+
+  function renderReceipts(){
+    const sorted = entries.slice().sort((a,b)=> b.id-a.id);
+    if (receiptSelectedId==null && sorted.length) receiptSelectedId = sorted[0].id;
+    const sel = entries.find(e=>e.id===receiptSelectedId);
+    const s = sel ? students.find(x=>x.id===sel.studentId) : null;
+    const netRest = s ? totalDue(s)-totalPaid(s.id) : 0;
+    const body = (sel && s) ? receiptBodyHTML(sel, s, netRest) : '';
+
+    contentEl.innerHTML = `
+      <div class="receipt-picker">
+        <div class="field" style="min-width:280px;">
+          <label>Select Receipt</label>
+          <select id="ekps-receipt-select">
+            ${sorted.length ? sorted.map(e=>{
+              const st = students.find(x=>x.id===e.studentId);
+              return `<option value="${e.id}" ${e.id===receiptSelectedId?'selected':''}>${e.receiptNo} — ${esc(st?st.name:'—')} (${e.month})</option>`;
+            }).join('') : `<option>Koi receipt nahi</option>`}
+          </select>
+        </div>
+        <span class="btn btn-primary" id="ekps-print-btn" ${sel?'':'disabled'}>${ICONS.print} Print Receipt (Half A4)</span>
+      </div>
+      <div class="receipt-wrap">
+        ${sel && s ? `
+        <div class="receipt" id="ekps-print-area">
+          ${body}
+          <div class="receipt-perf"></div>
+        </div>
+        <div style="width:380px; text-align:center; margin-top:8px; font-size:11px; color:var(--slate);">Print par A4 sheet ke upar wale hisse (top half) mein Student Copy aur Office Copy side-by-side banegi — neeche ka hissa blank rahega.</div>
+        ` : `<div class="empty-state">Pehle Fee Collection tab se ek entry banayein.</div>`}
+      </div>
+      <div id="ekps-print-dual">
+        ${sel && s ? `
+        <div class="top-half">
+          <div class="copy-col">
+            <div class="copy-tag">Student Copy</div>
+            ${body}
+          </div>
+          <div class="copy-col second">
+            <div class="copy-tag">Office Copy</div>
+            ${body}
+          </div>
+        </div>
+        <div class="bottom-half"></div>` : ''}
+      </div>`;
+
+    const sel1 = document.getElementById('ekps-receipt-select');
+    if (sel1) sel1.addEventListener('change', e=>{ receiptSelectedId = parseInt(e.target.value); renderReceipts(); });
+    const pbtn = document.getElementById('ekps-print-btn');
+    if (pbtn) pbtn.addEventListener('click', ()=> window.print());
+  }
+
+  /* ---------- BACKUP & RESTORE ---------- */
+  function renderBackup(){
+    const sorted = autoBackups.slice().sort((a,b)=> b.ts - a.ts);
+    const lastTs = sorted.length ? sorted[0].ts : null;
+    const fmtWhen = (ts)=> new Date(ts).toLocaleString('en-IN', {day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
+    const maskGasUrl = (u)=>{
+      if (!u) return '';
+      if (u.length <= 46) return u.slice(0,10) + '••••••••' + u.slice(-6);
+      return u.slice(0,38) + '••••••••••••' + u.slice(-14);
+    };
+
+    contentEl.innerHTML = `
+      <div class="kpi-card" style="margin-bottom:18px; --accent:var(--green);">
+        <div class="kpi-label">Auto-Backup Status</div>
+        <div class="kpi-value" style="font-size:17px;">${lastTs ? fmtWhen(lastTs) : 'Abhi tak koi auto-backup nahi hua'}</div>
+        <div class="kpi-note">Har save ke baad (max 3 min me ek baar) apne aap ek snapshot ban jata hai &middot; last ${AUTO_BACKUP_KEEP} snapshots surakshit rehte hain</div>
+      </div>
+      <div class="panel" style="margin-bottom:16px;">
+        <div class="panel-head">
+          <h3>${ICONS.backup} Google Sheets Sync (Remote)</h3>
+          <span class="mono" style="font-size:11px; color:${lastGasSync ? (lastGasSync.status==='ok' ? 'var(--green)' : 'var(--rust)') : 'var(--slate)'};">
+            ${gasBusy ? 'Syncing…' : (lastGasSync ? (lastGasSync.status==='ok' ? '● Connected — ' + fmtWhen(lastGasSync.ts) : '● Error — ' + fmtWhen(lastGasSync.ts)) : '○ Not synced yet')}
+          </span>
+        </div>
+        <div class="panel-body">
+          <p style="font-size:13px; color:var(--slate); margin:0 0 14px 0; line-height:1.6;">
+            Ye feature localStorage ke data ko ek Google Apps Script (GAS) bridge ke through ek external Google Sheet ke sath sync karta hai —
+            taaki data sirf is browser tak simit na rahe. Setup ke liye pehle neeche diya gaya Apps Script code apne Google Sheet me paste karein,
+            "Web App" ke roop me deploy karein (Access: <span class="mono">Anyone</span>), aur uska URL yahan neeche paste karke save karein.
+          </p>
+          <div class="form-grid" style="grid-template-columns: 1fr; margin-bottom:0;">
+            <div class="field">
+              <label>Apps Script Web App URL ${gasUrlLocked ? '🔒 Locked' : '🔓 Unlocked — editing'}</label>
+              ${gasUrlLocked ? `
+                <input type="text" id="ekps-gas-url" value="${esc(maskGasUrl(gasUrl))}" disabled
+                  style="background:#F2F0E7; color:var(--slate); cursor:not-allowed;"/>
+                <span class="hint">URL lock hai taaki galti se change/delete na ho. Change karne ke liye "Unlock" dabayein.</span>
+              ` : `
+                <input type="text" id="ekps-gas-url" placeholder="https://script.google.com/macros/s/XXXXXXXX/exec" value="${esc(gasUrl)}"/>
+                <span class="hint">Apps Script editor me Deploy &rarr; New deployment &rarr; Web app se ye URL milega.</span>
+              `}
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; margin: 2px 0 16px 0; flex-wrap:wrap;">
+            ${gasUrlLocked
+              ? `<span class="btn btn-ghost btn-sm" id="ekps-gas-unlock">🔓 Unlock to Edit</span>`
+              : `<span class="btn btn-ghost btn-sm" id="ekps-gas-save-url">Save URL</span>
+                 <span class="btn btn-ghost btn-sm" id="ekps-gas-lock">🔒 Lock</span>`
+            }
+            <label style="display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--slate); cursor:pointer; user-select:none;">
+              <input type="checkbox" id="ekps-gas-autosync" ${gasAutoSync ? 'checked' : ''} style="width:15px; height:15px; accent-color:var(--saffron);"/>
+              Har save ke baad auto-sync Google Sheet par karein
+            </label>
+          </div>
+          ${lastGasSync && lastGasSync.status==='error' ? `<div class="pick-preview" style="display:block; border-color:#EAD0C6; background:var(--rust-bg); color:var(--rust);">Last error: ${esc(lastGasSync.message)}</div>` : ''}
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <span class="btn btn-accent" id="ekps-gas-push" style="${(gasBusy||!gasUrl)?'opacity:.5; pointer-events:none;':''}">⬆ Upload to Sheet (Sync Now)</span>
+            <span class="btn btn-danger" id="ekps-gas-pull" style="${(gasBusy||!gasUrl)?'opacity:.5; pointer-events:none;':''} border-color:#EAD0C6; background:var(--rust-bg);">⬇ Download from Sheet (Restore)</span>
+          </div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-head"><h3>Auto Backups (Restore Point)</h3>
+            <span class="btn btn-ghost btn-sm" id="ekps-backup-now">Backup Now</span></div>
+          <div class="panel-body" id="ekps-autobackup-list">
+            ${sorted.length ? sorted.map(b=>`
+              <div class="recent-row">
+                <div><div class="recent-name">${fmtWhen(b.ts)}</div>
+                <div class="recent-meta">${b.students.length} students &middot; ${b.entries.length} entries &middot; ${(b.exams||[]).length} exams</div></div>
+                <span class="btn btn-ghost btn-sm" data-restore-auto="${b.ts}">Restore</span>
+              </div>`).join('') : `<div class="empty-state">Koi auto-backup abhi nahi bana. Kuch save karein ya "Backup Now" dabayein.</div>`}
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Download Backup</h3></div>
+          <div class="panel-body">
+            <p style="font-size:13px; color:var(--slate); margin:0 0 14px 0; line-height:1.6;">
+              Sabhi students, unke fees/bills, payment entries, school settings aur exams ek single <span class="mono">.json</span> file me save ho jayenge.
+              Ye file kahin bhi (pendrive, email, Google Drive) surakshit rakhein — kabhi bhi data restore karne ke kaam aayegi.
+            </p>
+            <div class="kpi-card" style="margin-bottom:16px;">
+              <div class="kpi-label">Current Data</div>
+              <div class="kpi-value" style="font-size:19px;">${students.length} Students &middot; ${entries.length} Entries</div>
+              <div class="kpi-note">Backup me students, entries, school settings aur exams shamil honge</div>
+            </div>
+            <span class="btn btn-accent" id="ekps-backup-download">⬇ Download Backup (.json)</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:16px;">
+        <div class="panel-head"><h3>Restore From Backup File</h3></div>
+        <div class="panel-body">
+          <p style="font-size:13px; color:var(--slate); margin:0 0 14px 0; line-height:1.6;">
+            Pehle se downloaded backup <span class="mono">.json</span> file yahan select karein. <b style="color:var(--rust);">Dhyan rahe:</b> restore karne se maujooda saara data (students + entries) is file ke data se replace ho jayega.
+          </p>
+          <div class="field">
+            <label>Select Backup File</label>
+            <input type="file" id="ekps-restore-file" accept="application/json,.json"/>
+          </div>
+          <span class="btn btn-danger" id="ekps-restore-btn" style="border-color:var(--rust); background:var(--rust-bg);">⬆ Restore Data</span>
+        </div>
+      </div>`;
+
+    const gasSaveBtn = document.getElementById('ekps-gas-save-url');
+    if (gasSaveBtn) gasSaveBtn.addEventListener('click', () => {
+      const val = document.getElementById('ekps-gas-url').value.trim();
+      gasUrl = val;
+      saveGasSettings();
+      toast(gasUrl ? 'Web App URL save ho gaya' : 'URL clear kar diya gaya');
+      renderBackup();
+    });
+    const gasUnlockBtn = document.getElementById('ekps-gas-unlock');
+    if (gasUnlockBtn) gasUnlockBtn.addEventListener('click', () => {
+      if (!confirm('Web App URL unlock karein? Galti se edit/delete hone se sync tootne ka risk hai.')) return;
+      gasUrlLocked = false;
+      saveGasSettings();
+      renderBackup();
+    });
+    const gasLockBtn = document.getElementById('ekps-gas-lock');
+    if (gasLockBtn) gasLockBtn.addEventListener('click', () => {
+      gasUrlLocked = true;
+      saveGasSettings();
+      toast('URL lock kar diya gaya');
+      renderBackup();
+    });
+    document.getElementById('ekps-gas-autosync').addEventListener('change', (e) => {
+      gasAutoSync = e.target.checked;
+      saveGasSettings();
+      toast(gasAutoSync ? 'Auto-sync ON kar diya' : 'Auto-sync OFF kar diya');
+    });
+    document.getElementById('ekps-gas-push').addEventListener('click', () => {
+      if (!gasUrl) { toast('Pehle Apps Script Web App URL save karein'); return; }
+      pushToSheet(false);
+    });
+    document.getElementById('ekps-gas-pull').addEventListener('click', () => {
+      if (!gasUrl) { toast('Pehle Apps Script Web App URL save karein'); return; }
+      pullFromSheet();
+    });
+
+    document.getElementById('ekps-backup-now').addEventListener('click', () => {
+      snapshotNow();
+      toast('Backup snapshot ban gaya');
+      renderBackup();
+    });
+
+    contentEl.querySelectorAll('[data-restore-auto]').forEach(el=>{
+      el.addEventListener('click', () => {
+        const ts = parseFloat(el.dataset.restoreAuto);
+        const snap = autoBackups.find(b=>b.ts===ts);
+        if (!snap) return;
+        if (!confirm(`Is ${fmtWhen(ts)} wale snapshot par restore karein? Isse maujooda ${students.length} students aur ${entries.length} entries hat jayengi, aur snapshot ke ${snap.students.length} students / ${snap.entries.length} entries aa jayengi.`)) return;
+        students = JSON.parse(JSON.stringify(snap.students));
+        entries = JSON.parse(JSON.stringify(snap.entries));
+        schoolSettings = {...schoolSettings, ...(snap.settings || {})};
+        exams = JSON.parse(JSON.stringify(snap.exams || []));
+        students.forEach(normalizeStudent);
+        saveStudents();
+        saveEntries();
+        saveSettings();
+        saveExams();
+        toast('Auto-backup se restore ho gaya');
+        renderBackup();
+      });
+    });
+
+    document.getElementById('ekps-backup-download').addEventListener('click', ()=>{
+      const payload = {
+        app: 'Education Key Public School — Fee Manager',
+        exportedAt: new Date().toISOString(),
+        students,
+        entries,
+        settings: schoolSettings,
+        exams
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `EKPS_Backup_${todayISO()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast('Backup download ho rahi hai');
+    });
+
+    document.getElementById('ekps-restore-btn').addEventListener('click', ()=>{
+      const fileInput = document.getElementById('ekps-restore-file');
+      const file = fileInput.files && fileInput.files[0];
+      if (!file) { toast('Pehle ek backup file select karein'); return; }
+      const reader = new FileReader();
+      reader.onload = (ev)=>{
+        try {
+          const data = JSON.parse(ev.target.result);
+          if (!data.students || !data.entries) {
+            toast('Ye file valid backup nahi hai');
+            return;
+          }
+          if (!confirm(`Restore karein? Isse maujooda ${students.length} students aur ${entries.length} entries hat jayengi, aur backup ke ${data.students.length} students / ${data.entries.length} entries aa jayengi.`)) return;
+          data.students.forEach(normalizeStudent);
+          students = data.students;
+          entries = data.entries;
+          schoolSettings = {...schoolSettings, ...(data.settings || data.schoolSettings || {})};
+          exams = Array.isArray(data.exams) ? data.exams : [];
+          saveStudents();
+          saveEntries();
+          saveSettings();
+          saveExams();
+          toast('Data restore ho gaya');
+          renderBackup();
+        } catch(err){
+          toast('File padhne me error — sahi .json file chunein');
+        }
+      };
+      reader.readAsText(file);
+    });
+  }
+
+  document.getElementById('ekps-logout-btn').addEventListener('click', () => {
+    currentUserRole = null;
+    localStorage.removeItem('ekps_session');
+    toast('Logged out successfully');
+    render();
+  });
+
+  function render(){
+    if (!ready) { contentEl.innerHTML = `<div class="empty-state">Loading&hellip;</div>`; return; }
+    
+    if(!currentUserRole) {
+      const badge0 = document.getElementById('ekps-gas-badge');
+      if (badge0) badge0.style.display = 'none';
+      renderLoginView();
+      return;
+    }
+
+    const activeRouteConfig = NAV.find(n => n.id === route);
+    if(activeRouteConfig && !activeRouteConfig.roles.includes(currentUserRole)){
+      route = 'dashboard'; 
+    }
+
+    document.getElementById('ekps-logout-btn').style.display = 'inline-block';
+    const rb = document.getElementById('ekps-role-badge');
+    rb.style.display = 'inline-block';
+    rb.textContent = currentUserRole;
+    renderGasStatusBadge();
+    maybeShowGasSyncIssueModal();
+    
+    renderNav();
+    titleEl.textContent = TITLES[route][0];
+    subEl.textContent = TITLES[route][1];
+    
+    if (route==='dashboard') renderDashboard();
+    else if (route==='collect') renderCollect();
+    else if (route==='students') renderStudents();
+    else if (route==='feemanage') renderFeeManagement(); 
+    else if (route==='promotion') renderPromotion();
+    else if (route==='admit') renderAdmitCards();
+    else if (route==='ledger') renderLedger();
+    else if (route==='receipts') renderReceipts();
+    else if (route==='backup') renderBackup();
+  }
+
+  function tickClock(){
+    const el = document.getElementById('ekps-clock');
+    if (el) el.textContent = new Date().toLocaleString('en-IN', {weekday:'short', day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+  }
+  setInterval(tickClock, 1000*30);
+  tickClock();
+
+  loadData();
+  render();
+})();
+</script>
+</body>
+</html>
