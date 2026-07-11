@@ -588,40 +588,54 @@
 
     ready = true;
   }
-  
+
+  // Local-storage saves were previously fire-and-forget: a quota-exceeded error
+  // (very possible here since student photos/logo/signature are stored as base64)
+  // was silently swallowed, so the app would look "synced" while nothing had
+  // actually persisted. This wrapper makes that failure visible instead.
+  let localSaveOk = true;
+  function safeLocalSet(key, value){
+    try {
+      localStorage.setItem(key, value);
+      if (!localSaveOk) { localSaveOk = true; renderGasStatusBadge(); }
+      return true;
+    } catch(e){
+      console.error('local save failed', key, e);
+      localSaveOk = false;
+      renderGasStatusBadge();
+      toast('⚠ Data SAVE nahi hua (browser storage full ho sakta hai) — kisi student ki photo/logo hata kar dobara try karein');
+      return false;
+    }
+  }
+
   function saveStudents(){
-    try { localStorage.setItem('ekps_students', JSON.stringify(students)); }
-    catch(e){ console.error('save students failed', e); }
+    const ok = safeLocalSet('ekps_students', JSON.stringify(students));
     maybeAutoBackup();
-    maybeAutoSyncSheet();
+    if (ok) maybeAutoSyncSheet();
   }
   function saveEntries(){
-    try { localStorage.setItem('ekps_entries', JSON.stringify(entries)); }
-    catch(e){ console.error('save entries failed', e); }
+    const ok = safeLocalSet('ekps_entries', JSON.stringify(entries));
     maybeAutoBackup();
-    maybeAutoSyncSheet();
+    if (ok) maybeAutoSyncSheet();
   }
   function saveAuth(){
-    try { localStorage.setItem('ekps_auth', JSON.stringify(authData)); } catch(e){}
+    safeLocalSet('ekps_auth', JSON.stringify(authData));
   }
   function saveSettings(){
-    try { localStorage.setItem('ekps_settings', JSON.stringify(schoolSettings)); }
-    catch(e){ console.error('save settings failed', e); }
+    const ok = safeLocalSet('ekps_settings', JSON.stringify(schoolSettings));
     maybeAutoBackup();
-    maybeAutoSyncSheet();
+    if (ok) maybeAutoSyncSheet();
   }
   function saveExams(){
-    try { localStorage.setItem('ekps_exams', JSON.stringify(exams)); }
-    catch(e){ console.error('save exams failed', e); }
+    const ok = safeLocalSet('ekps_exams', JSON.stringify(exams));
     maybeAutoBackup();
-    maybeAutoSyncSheet();
+    if (ok) maybeAutoSyncSheet();
   }
 
   const AUTO_BACKUP_MIN_GAP_MS = 3 * 60 * 1000; 
   const AUTO_BACKUP_KEEP = 5;
   function saveAutoBackups(){
-    try { localStorage.setItem('ekps_autobackups', JSON.stringify(autoBackups)); }
-    catch(e){ console.error('save autobackups failed', e); }
+    safeLocalSet('ekps_autobackups', JSON.stringify(autoBackups));
   }
   function snapshotNow(){
     autoBackups.push({
@@ -773,7 +787,15 @@
   function renderGasStatusBadge(){
     const badge = document.getElementById('ekps-gas-badge');
     if (!badge) return;
-    if (!gasUrl || !currentUserRole) { badge.style.display = 'none'; return; }
+    if (!currentUserRole) { badge.style.display = 'none'; return; }
+    if (!localSaveOk) {
+      badge.style.display = 'inline-flex';
+      badge.onclick = () => { route = 'backup'; render(); };
+      badge.style.background = 'var(--rust-bg)'; badge.style.color = 'var(--rust)';
+      badge.textContent = '⛔ Local save FAILED — storage full';
+      return;
+    }
+    if (!gasUrl) { badge.style.display = 'none'; return; }
     badge.style.display = 'inline-flex';
     badge.onclick = () => { route = 'backup'; render(); };
     if (gasBusy) {
